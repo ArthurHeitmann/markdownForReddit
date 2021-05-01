@@ -10,7 +10,7 @@ interface TestCase {
     error: string
 }
 
-const testCases = Object.entries(cases).map((testCase, i) => (<TestCase> {
+const testCases = cases.map((testCase, i) => (<TestCase> {
     id: i,
     status: "noRun",
     markdown: testCase[0],
@@ -51,16 +51,16 @@ function displayResults() {
                 break;
             case "error":
                 console.error(`${testCase.id}: ERROR`);
-                // console.error(testCase.error)
+                console.error(testCase.error)
                 break;
             case "wrong":
                 console.error(`${testCase.id}: WRONG`);
-                // console.error("markdown:")
-                // console.error(testCase.markdown);
-                // console.error("expected:")
-                // console.error(testCase.expectedHtml);
-                // console.error("actual:")
-                // console.error(testCase.actualHtml);
+                console.error("markdown:")
+                console.error(testCase.markdown);
+                console.error("expected:")
+                console.error(testCase.expectedHtml);
+                console.error("actual:")
+                console.error(testCase.actualHtml);
                 break;
         }
     }
