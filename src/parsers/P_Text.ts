@@ -3,16 +3,16 @@ import escapeHtml from "escape-html";
 import {ParsingCursor} from "../parsingCursor.js";
 
 export class P_Text extends P_Parser {
-	static id = "text";
+	id: string = "text";
 	canChildrenRepeat: boolean = false;
 	possibleChildren: ParserType[] = [];
 
-	private readonly allowLineEndBreaks: boolean;
+	private readonly modifyLineBreaks: boolean;
 
-	constructor(cursor: ParsingCursor, allowLineEndBreaks = true) {
+	constructor(cursor: ParsingCursor, modifyLineBreaks = true) {
 		super(cursor);
 
-		this.allowLineEndBreaks = allowLineEndBreaks;
+		this.modifyLineBreaks = modifyLineBreaks;
 	}
 
 	private parsedText = "";
@@ -23,11 +23,11 @@ export class P_Text extends P_Parser {
 
 	parseChar(): AfterParseResult {
 		this.parsedText += this.cursor.currentChar;
-		return AfterParseResult.consumed;
+		return AfterParseResult.text;
 	}
 
 	toHtmlString(): string {
-		if (this.allowLineEndBreaks)
+		if (this.modifyLineBreaks)
 			return  escapeHtml(this.parsedText)
 				.replace(/ {2,}\n/g, "<br>\n")			// replace double space at end of line with <br>
 				.replace(/(?<!<br>)\s*\n(?=.+)/g, " ")			// remove all other line breaks

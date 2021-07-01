@@ -23,18 +23,18 @@ export function parseMarkdown(markdown: string): string {
 	return rootParser.toHtmlString();
 }
 
-console.log(`:${parseMarkdown(
-`
-*i  
-i*
+console.log(`:${parseMarkdown(`
 
-x x
+*italic* __bold__ ___all___
 
-x
-y
-z
+\`code\`
 
-x  
-y
-`
-)}:`);
+\` code l1
+l2\`
+
+\` code l1
+
+l2\`
+
+
+`)}:`);

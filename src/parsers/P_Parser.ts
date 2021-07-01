@@ -1,7 +1,11 @@
 import {ParsingCursor} from "../parsingCursor.js";
 
 export enum AfterParseResult {
-	ended, consumed
+	ended, consumed, text
+}
+
+export enum ParsingState {
+	notStarted, start, content, end, completed
 }
 
 type ParserConstrSignature = new (state: ParsingCursor, ...other: any) => P_Parser;
@@ -10,15 +14,12 @@ export class ParserType {
 	private otherParams: any[];
 	private constr: ParserConstrSignature;
 
-	id: string;
-
 	make(cursor: ParsingCursor): P_Parser {
 		return new this.constr(cursor, ...this.otherParams);
 	}
 
-	static from(id: string, constr: ParserConstrSignature, ...otherParams: any): ParserType {
+	static from(constr: ParserConstrSignature, ...otherParams: any): ParserType {
 		const type = new ParserType();
-		type.id = id;
 		type.constr = constr;
 		type.otherParams = otherParams;
 		return type;
@@ -26,11 +27,13 @@ export class ParserType {
 }
 
 export abstract class P_Parser {
+	abstract id: string;
 	abstract possibleChildren: ParserType[];
 	abstract canChildrenRepeat: boolean;
 	protected cursor: ParsingCursor;
 	protected children: P_Parser[] = [];
 	protected parsingChild: P_Parser = null;
+	private tryTextAlternative = false;
 
 	constructor(state: ParsingCursor) {
 		this.cursor = state;
@@ -46,10 +49,10 @@ export abstract class P_Parser {
 	};
 
 	parseChar(): AfterParseResult {
-		if (this.parsingChild === null) {
+		if (this.parsingChild === null || this.tryTextAlternative) {
 			for (const state of this.possibleChildren) {
 				const newParser = state.make(this.cursor);
-				if (newParser.canStart()) {
+				if (!(this.tryTextAlternative && newParser.id === "text") && newParser.canStart()) {
 					this.parsingChild = newParser;
 					this.children.push(newParser);
 					break;
@@ -57,6 +60,7 @@ export abstract class P_Parser {
 			}
 			if (this.parsingChild === null)
 				throw new Error("Couldn't start parsing");
+			this.tryTextAlternative = false
 		}
 
 		const parseResult = this.parsingChild.parseChar();
@@ -71,6 +75,10 @@ export abstract class P_Parser {
 			}
 		}
 		else if (parseResult === AfterParseResult.consumed) {
+			return AfterParseResult.consumed;
+		}
+		else if (parseResult === AfterParseResult.text) {
+			this.tryTextAlternative = true;
 			return AfterParseResult.consumed;
 		}
 		else {

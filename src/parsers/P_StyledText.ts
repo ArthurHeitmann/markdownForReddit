@@ -1,4 +1,4 @@
-import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
+import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
 import {ParsingCursor} from "../parsingCursor.js";
 
@@ -10,7 +10,7 @@ interface StyleType {
 }
 
 export class P_StyledText extends P_Parser {
-	static id = "styledText";
+	id: string = "styledText";
 	canChildrenRepeat: boolean = true;
 	possibleChildren: ParserType[] = [];
 
@@ -24,7 +24,7 @@ export class P_StyledText extends P_Parser {
 
 	];
 	private excludedCharSeq: string[];
-	private parsingState: "notStarted" | "start" | "content" | "end" | "completed" = "notStarted";
+	private parsingState: ParsingState = ParsingState.notStarted;
 	private styleType: StyleType = null
 	private parsedStartChars = "";
 	private parsedEndChars = "";
@@ -50,7 +50,7 @@ export class P_StyledText extends P_Parser {
 	}
 
 	parseChar(): AfterParseResult {
-		if (this.parsingState === "notStarted") {
+		if (this.parsingState === ParsingState.notStarted) {
 			for (const styleType of P_StyledText.styleTypes) {
 				if (
 					!this.excludedCharSeq.includes(styleType.charSequence)
@@ -61,34 +61,34 @@ export class P_StyledText extends P_Parser {
 					break;
 				}
 			}
-			this.possibleChildren[0] = ParserType.from(P_BasicText.id, P_BasicText, this.excludedCharSeq.concat(this.styleType.charSequence));
-			this.parsingState = "start";
+			this.possibleChildren[0] = ParserType.from(P_BasicText, this.excludedCharSeq.concat(this.styleType.charSequence));
+			this.parsingState = ParsingState.start;
 		}
 
-		if (this.parsingState === "start") {
+		if (this.parsingState === ParsingState.start) {
 			this.parsedStartChars += this.cursor.currentChar;
 			if (this.parsedStartChars === this.styleType.charSequence)
-				this.parsingState = "content";
+				this.parsingState = ParsingState.content;
 			return AfterParseResult.consumed;
 		}
 
-		if (this.parsingState === "content") {
+		if (this.parsingState === ParsingState.content) {
 			if (
 				this.cursor.remainingText.startsWith(this.getCharSequenceEnd())
 				&&
 				this.parsingChild && !this.parsingChild.canConsumeChar()
 			) {
-				this.parsingState = "end";
+				this.parsingState = ParsingState.end;
 			}
 			else {
 				return super.parseChar();
 			}
 		}
 
-		if (this.parsingState === "end") {
+		if (this.parsingState === ParsingState.end) {
 			this.parsedEndChars += this.cursor.currentChar;
 			if (this.parsedEndChars === this.getCharSequenceEnd()) {
-				this.parsingState = "completed";
+				this.parsingState = ParsingState.completed;
 				return AfterParseResult.ended;
 			}
 			return AfterParseResult.consumed;
@@ -101,7 +101,7 @@ export class P_StyledText extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		if (this.parsingState === "completed")
+		if (this.parsingState === ParsingState.completed)
 			return `<${this.styleType.tagName}${this.styleType.tagOther ?? ""}>${super.toHtmlString()}</${this.styleType.tagName}>`;
 		else
 			return `${this.parsedStartChars}${super.toHtmlString()}${this.parsedEndChars}`
