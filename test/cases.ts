@@ -1,7 +1,7 @@
 export const cases: string[][] = [
 	['', ''],
 	["Hello world\n\nparagraph 2", `<p>Hello world</p><p>paragraph 2</p>`],
-	// ["Some `code`", `<p>Some <code>code</code></p>`],
+	["Some `code`", `<p>Some <code>code</code></p>`],
 	// ["# Heading 1", `<h1>Heading 1</h1>`],
 	// ["## Heading 2", `<h2>Heading 2</h2>`],
 	// from https://github.com/gamefreak/snuownd/blob/master/test.js

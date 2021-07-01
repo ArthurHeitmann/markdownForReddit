@@ -25,16 +25,8 @@ export function parseMarkdown(markdown: string): string {
 
 console.log(`:${parseMarkdown(`
 
-*italic* __bold__ ___all___
+p1
 
-\`code\`
-
-\` code l1
-l2\`
-
-\` code l1
-
-l2\`
-
+^(s1111111 __b__) ^(\`coded\` ^ss) ^s333
 
 `)}:`);

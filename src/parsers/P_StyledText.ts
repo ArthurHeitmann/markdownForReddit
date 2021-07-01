@@ -25,7 +25,7 @@ export class P_StyledText extends P_Parser {
 	];
 	private excludedCharSeq: string[];
 	private parsingState: ParsingState = ParsingState.notStarted;
-	private styleType: StyleType = null
+	private styleType: StyleType = null;
 	private parsedStartChars = "";
 	private parsedEndChars = "";
 
