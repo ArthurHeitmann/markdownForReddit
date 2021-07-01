@@ -1,57 +1,40 @@
-import {AfterParseResult, ParsingState} from "./P_Parser.js";
-import {P_Root} from "./P_Root.js";
+import {AfterParseResult} from "./parsers/P_Parser.js";
+import {P_Root} from "./parsers/P_Root.js";
+import {ParsingCursor} from "./parsingCursor.js";
 
 export function parseMarkdown(markdown: string): string {
 	if (!markdown)
 		return "";
 
-	const allLines = markdown.split("\n").map(line => `${line}\n`);
-	const parsingState: ParsingState = {
-		allText: markdown,
-		row: 0,
-		column: 0,
-		charIndex: 0,
-		allLines: allLines,
-		currentLine: allLines[0],
-		nextLine: allLines[1] ?? null,
-		lineStart: 0,
-		currentChar: markdown[0],
-	}
-	const rootParser = new P_Root(parsingState);
+	const cursor = new ParsingCursor(markdown);
+	const rootParser = new P_Root(cursor);
 	let parseResult: AfterParseResult = AfterParseResult.consumed;
 	while (parseResult !== AfterParseResult.ended) {
 		// parse next char
-		parseResult = rootParser.parse();
-
-		// update parsing state
-		parsingState.charIndex++;
-		parsingState.currentChar = parsingState.allText[parsingState.charIndex]
+		parseResult = rootParser.parseChar();
 		// reached end of all text
-		if (parsingState.charIndex === parsingState.allText.length) {
-			rootParser.onParentEnd();
+		if (cursor.charIndex === cursor.allText.length)
 			break;
-		}
-		// reached end of current line
-		if (parsingState.column + 1 === parsingState.currentLine.length) {
-			parsingState.row++;
-			parsingState.column = 0;
-			parsingState.currentLine = parsingState.allLines[parsingState.row];
-			parsingState.nextLine = parsingState.allLines[parsingState.row + 1] ?? null;
-			parsingState.lineStart = 0;
-		}
-		// still on same line
-		else {
-			parsingState.column++;
-		}
+		// move cursor & update cursor data
+		cursor.moveCursor();
 	}
+	rootParser.onParentEnd();
 
 	return rootParser.toHtmlString();
 }
 
-console.log(`START:${parseMarkdown(
+console.log(`:${parseMarkdown(
 `
+*i  
+i*
 
- 
+x x
 
+x
+y
+z
+
+x  
+y
 `
-)}:END`)
+)}:`);
