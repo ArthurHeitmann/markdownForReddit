@@ -162,4 +162,31 @@ describe("Markdown to HTML", () => {
 			testMarkdown("\\" + ch.repeat(3), `<p>${ch.repeat(3)}</p>`)
 		}
 	});
+
+	describe("Quote", () => {
+		it("Simple Quote", () => {
+			testMarkdown("> quote", `<blockquote><p>quote</p></blockquote>`)
+		});
+
+		it("Multiline Quote", () => {
+			testMarkdown("> quote  \n> l2", `<blockquote><p>quote<br>\nl2</p></blockquote>`)
+		});
+
+		it("Multi-paragraph Quote", () => {
+			testMarkdown("> quote\n> \n> b2", `<blockquote><p>quote</p><p>b2</p></blockquote>`)
+		});
+
+		it("Nested Quotes", () => {
+			testMarkdown("> > l2", `<blockquote><blockquote><p>l2</p></blockquote></blockquote>`)
+		});
+
+		it("Nested Multiline Quotes", () => {
+			testMarkdown("> > l1  \n> > l2", `<blockquote><blockquote><p>l1<br>\nl2</p></blockquote></blockquote>`)
+		});
+
+		it("Styled Quotes", () => {
+			testMarkdown("\n> *i* `` code` `` > __b__\n> \n>     code \n> \n> ---\n",
+				`<blockquote><p><em>i</em> <code>code\`</code> &gt; <strong>b</strong></p><pre><code>code </code></pre><hr></blockquote>`)
+		});
+	});
 });
