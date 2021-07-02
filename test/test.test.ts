@@ -188,5 +188,21 @@ describe("Markdown to HTML", () => {
 			testMarkdown("\n> *i* `` code` `` > __b__\n> \n>     code \n> \n> ---\n",
 				`<blockquote><p><em>i</em> <code>code\`</code> &gt; <strong>b</strong></p><pre><code>code </code></pre><hr></blockquote>`)
 		});
+
+		it("Escaped Quotes", () => {
+			testMarkdown("\\> not a quote", `<p>&gt; not a quote</p>`)
+		});
+	});
+
+	describe("Headings", () => {
+		for (let i = 0; i < 6; ++i) {
+			it(`Simple h1`, () => {
+				testMarkdown(`${"#".repeat(i + 1)} Heading`, `<h${i+1}>Heading</h${i+1}>`);
+			});
+		}
+
+		it("Styled Heading", () => {
+			testMarkdown("## *i* ^(sup 2) # testing `code`", `<h2><em>i</em> <sup>sup 2</sup> # testing <code>code</code></h2>`)
+		});
 	});
 });
