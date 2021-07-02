@@ -23,4 +23,4 @@ export function parseMarkdown(markdown: string): string {
 	return rootParser.toHtmlString();
 }
 
-console.log(`:${parseMarkdown(`x_t_x`)}:`);
+console.log(`:${parseMarkdown(`x^s`)}:`);

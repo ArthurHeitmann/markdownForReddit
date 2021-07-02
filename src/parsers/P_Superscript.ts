@@ -36,7 +36,7 @@ export class P_Superscript extends P_Parser {
 				this.parseState = ParsingState.completed;
 				return AfterParseResult.ended;
 			}
-			if (!this.usesParentheses && /\s/.test(this.cursor.remainingText[1])) {
+			if (!this.usesParentheses && /\s/.test(this.cursor.remainingText[1] ?? " ")) {
 				this.parseState = ParsingState.completed;
 				super.parseChar();
 				return AfterParseResult.ended;
