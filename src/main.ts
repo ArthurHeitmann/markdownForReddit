@@ -3,9 +3,6 @@ import {P_Root} from "./parsers/P_Root.js";
 import {ParsingCursor} from "./parsingCursor.js";
 
 export function parseMarkdown(markdown: string): string {
-	if (!markdown)
-		return "";
-
 	const cursor = new ParsingCursor(markdown);
 	const rootParser = new P_Root(cursor);
 	let parseResult: AfterParseResult = AfterParseResult.consumed;
@@ -23,4 +20,4 @@ export function parseMarkdown(markdown: string): string {
 	return rootParser.toHtmlString();
 }
 
-console.log(`:${parseMarkdown(`x^s`)}:`);
+console.log(`:${parseMarkdown(`\\>!x!<`)}:`);

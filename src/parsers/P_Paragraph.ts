@@ -21,6 +21,6 @@ export class P_Paragraph extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<p>${super.toHtmlString()}</p>`;
+		return `<p>${super.toHtmlString().replace(/^\s*|\s*$/g, "")}</p>`;
 	}
 }

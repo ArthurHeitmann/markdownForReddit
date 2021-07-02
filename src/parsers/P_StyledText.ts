@@ -1,6 +1,7 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
 import {ParsingCursor} from "../parsingCursor.js";
+import escapeHtml from "escape-html";
 
 interface StyleType {
 	charSequence: string;
@@ -110,7 +111,7 @@ export class P_StyledText extends P_Parser {
 		if (this.parsingState === ParsingState.completed)
 			return `<${this.styleType.tagName}${this.styleType.tagOther ?? ""}>${super.toHtmlString()}</${this.styleType.tagName}>`;
 		else
-			return `${this.parsedStartChars}${super.toHtmlString()}${this.parsedEndChars}`
+			return `${escapeHtml(this.parsedStartChars)}${super.toHtmlString()}${escapeHtml(this.parsedEndChars)}`
 	}
 
 	private getCharSequenceEnd(): string {
