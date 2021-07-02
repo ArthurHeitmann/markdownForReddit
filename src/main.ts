@@ -23,5 +23,7 @@ console.log(`:${parseMarkdown(`
 > 1
 > 
 > 2
+> 
+> # H1 \`code\`
 
 `)}:`);

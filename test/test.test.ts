@@ -205,4 +205,15 @@ describe("Markdown to HTML", () => {
 			testMarkdown("## *i* ^(sup 2) # testing `code`", `<h2><em>i</em> <sup>sup 2</sup> # testing <code>code</code></h2>`)
 		});
 	});
+
+	describe("html", () => {
+		it("HTML entities", () => {
+			testMarkdown("&nbsp;", `<p>&nbsp;</p>`)
+			testMarkdown("&#x2003;", `<p>&#x2003;</p>`)
+		});
+
+		it("Escaped html chars", () => {
+			testMarkdown("<script></script>", `<p>&lt;script&gt;&lt;/script&gt;</p>`)
+		});
+	});
 });

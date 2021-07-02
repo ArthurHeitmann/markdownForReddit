@@ -13,7 +13,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "escape-html": "^1.0.3",
     "typescript": "^3.9.7"
   },
   "devDependencies": {
