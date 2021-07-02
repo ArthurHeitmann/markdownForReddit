@@ -6,7 +6,7 @@ export function parseMarkdown(markdown: string): string {
 	const cursor = new ParsingCursor(markdown);
 	const rootParser = new P_Root(cursor);
 	let parseResult: AfterParseResult = AfterParseResult.consumed;
-	while (parseResult !== AfterParseResult.ended) {
+	while (cursor.charIndex !== cursor.allText.length) {
 		// parse next char
 		parseResult = rootParser.parseChar();
 		// reached end of all text
@@ -15,9 +15,8 @@ export function parseMarkdown(markdown: string): string {
 		// move cursor & update cursor data
 		cursor.moveCursor();
 	}
-	rootParser.onParentEnd();
 
 	return rootParser.toHtmlString();
 }
 
-console.log(`:${parseMarkdown(`\\>!x!<`)}:`);
+console.log(`:${parseMarkdown(`    c`)}:`);

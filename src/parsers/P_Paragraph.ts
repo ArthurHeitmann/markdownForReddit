@@ -12,7 +12,6 @@ export class P_Paragraph extends P_Parser {
 			&&
 			(this.cursor.nextLine === null || /^\s*\n$/.test(this.cursor.nextLine))
 		) {
-			this.onParentEnd();
 			return AfterParseResult.ended;
 		}
 		else {

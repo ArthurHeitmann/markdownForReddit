@@ -1,9 +1,10 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
 import {P_Paragraph} from "./P_Paragraph.js";
+import {P_CodeMultilineSpaces} from "./P_CodeMultilineSpaces.js";
 
 export class P_Block extends P_Parser {
 	id: string = "block";
-	possibleChildren: ParserType[] = [ParserType.from(P_Paragraph)];
+	possibleChildren: ParserType[] = [ParserType.from(P_CodeMultilineSpaces), ParserType.from(P_Paragraph)];
 	canChildrenRepeat: boolean;
 
 	hasBlockStarted = false;

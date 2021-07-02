@@ -90,12 +90,6 @@ export abstract class P_Parser {
 		return this.parsingChild ? this.parsingChild.canConsumeChar() : false;
 	}
 
-	onParentEnd(): void {
-		for (const child of this.children) {
-			child.onParentEnd();
-		}
-	};
-
 	toHtmlString(): string {
 		return this.children.map(ch => ch.toHtmlString()).join("");
 	};
