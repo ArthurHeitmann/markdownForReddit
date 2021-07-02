@@ -7,12 +7,11 @@ export class P_Superscript extends P_Parser {
 	possibleChildren: ParserType[] = [ParserType.from(P_BasicText)];
 
 	private parsedStartChars = "";
-
 	private usesParentheses: boolean;
 	private parseState: ParsingState = ParsingState.notStarted;
 
 	canStart(): boolean {
-		return /^\^[\S(]/.test(this.cursor.remainingText);
+		return /^\^[\S(]/.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\";
 	}
 
 	parseChar(): AfterParseResult {

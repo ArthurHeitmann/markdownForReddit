@@ -2,6 +2,14 @@ export const cases: string[][] = [
 	['', ''],
 	["Hello world\n\nparagraph 2", `<p>Hello world</p><p>paragraph 2</p>`],
 	["Some `code`", `<p>Some <code>code</code></p>`],
+	["Normal^superscript", `<p>Normal<sup>superscript</sup></p>`],
+	["Escape\\^superscript", `<p>Escape^superscript</p>`],
+	["~~normal strikethrough~~", `<p><del>normal strikethrough</del></p>`],
+	["\\~~escaped strikethrough~~", `<p>~~escaped strikethrough~~</p>`],
+	['<test>', `<p>&lt;test&gt;</p>`],
+	['words_with_underscores', `<p>words_with_underscores</p>`],
+	['words*with*asterisks', `<p>words<em>with</em>asterisks</p>`],
+	['~test', `<p>~test</p>`],
 	// ["# Heading 1", `<h1>Heading 1</h1>`],
 	// ["## Heading 2", `<h2>Heading 2</h2>`],
 	// from https://github.com/gamefreak/snuownd/blob/master/test.js
@@ -56,17 +64,6 @@ export const cases: string[][] = [
 	// ' www.a.co?with&test':
 	//     '<p><a href="http://www.a.co?with&amp;test">www.a.co?with&amp;test</a></p>\n',
 	//
-	// 'Normal^superscript':
-	//     '<p>Normal<sup>superscript</sup></p>\n',
-	//
-	// 'Escape\\^superscript':
-	//     '<p>Escape^superscript</p>\n',
-	//
-	// '~~normal strikethrough~~':
-	//     '<p><del>normal strikethrough</del></p>\n',
-	//
-	// '\\~~escaped strikethrough~~':
-	//     '<p>~~escaped strikethrough~~</p>\n',
 	//
 	// 'anywhere\x03, you':
 	//     '<p>anywhere, you</p>\n',
@@ -94,18 +91,6 @@ export const cases: string[][] = [
 	//
 	// '/r/multireddit+test+yay':
 	//     '<p><a href="/r/multireddit+test+yay">/r/multireddit+test+yay</a></p>\n',
-	//
-	// '<test>':
-	//     '<p>&lt;test&gt;</p>\n',
-	//
-	// 'words_with_underscores':
-	//     '<p>words_with_underscores</p>\n',
-	//
-	// 'words*with*asterisks':
-	//     '<p>words<em>with</em>asterisks</p>\n',
-	//
-	// '~test':
-	//     '<p>~test</p>\n',
 	//
 	// '/u/test':
 	//     '<p><a href="/u/test">/u/test</a></p>\n',

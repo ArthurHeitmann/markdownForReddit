@@ -7,6 +7,7 @@ interface StyleType {
 	charSequenceEnd?: string;
 	tagName: string;
 	tagOther?: string;
+	noMidWordEnd?: boolean;
 }
 
 export class P_StyledText extends P_Parser {
@@ -18,7 +19,7 @@ export class P_StyledText extends P_Parser {
 		{ charSequence: "**", tagName: "strong" },
 		{ charSequence: "__", tagName: "strong" },
 		{ charSequence: "*", tagName: "em" },
-		{ charSequence: "_", tagName: "em" },
+		{ charSequence: "_", tagName: "em", noMidWordEnd: true },
 		{ charSequence: "~~", tagName: "del" },
 		{ charSequence: ">!", charSequenceEnd: "!<", tagName: "span", tagOther: ` class="md-spoiler-text"` },
 
@@ -42,6 +43,8 @@ export class P_StyledText extends P_Parser {
 				this.cursor.remainingText.startsWith(styleType.charSequence)						// starts with right chars
 				&&
 				/^(?!\s)/.test(this.cursor.remainingText.slice(styleType.charSequence.length))		// isn't followed by \s
+				&&
+				this.cursor.previousChar !== "\\"													// isn't escaped
 			) {
 				return true;
 			}
@@ -73,8 +76,11 @@ export class P_StyledText extends P_Parser {
 		}
 
 		if (this.parsingState === ParsingState.content) {
+			const afterEscapeText = this.cursor.remainingText.slice(this.getCharSequenceEnd().length);
 			if (
 				this.cursor.remainingText.startsWith(this.getCharSequenceEnd())
+				&&
+				!(this.styleType.noMidWordEnd && /^\S/.test(afterEscapeText))
 				&&
 				this.parsingChild && !this.parsingChild.canConsumeChar()
 			) {

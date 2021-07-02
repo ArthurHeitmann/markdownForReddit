@@ -7,6 +7,7 @@ export class P_Text extends P_Parser {
 	canChildrenRepeat: boolean = false;
 	possibleChildren: ParserType[] = [];
 
+	private static escapableCharsRegex = /\\([`~*_\-\\>\]^])/g;
 	private readonly modifyLineBreaks: boolean;
 
 	constructor(cursor: ParsingCursor, modifyLineBreaks = true) {
@@ -29,8 +30,9 @@ export class P_Text extends P_Parser {
 	toHtmlString(): string {
 		if (this.modifyLineBreaks)
 			return  escapeHtml(this.parsedText)
-				.replace(/ {2,}\n/g, "<br>\n")			// replace double space at end of line with <br>
+				.replace(/ {2,}\n/g, "<br>\n")					// replace double space at end of line with <br>
 				.replace(/(?<!<br>)\s*\n(?=.+)/g, " ")			// remove all other line breaks
+				.replace(P_Text.escapableCharsRegex, "$1")
 		else
 			return escapeHtml(this.parsedText);
 	}
