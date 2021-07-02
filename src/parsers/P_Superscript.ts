@@ -11,7 +11,7 @@ export class P_Superscript extends P_Parser {
 	private parseState: ParsingState = ParsingState.notStarted;
 
 	canStart(): boolean {
-		return /^\^[\S(]/.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\";
+		return /^\^(\S+|(\(.*\)))/s.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\";
 	}
 
 	parseChar(): AfterParseResult {

@@ -1,6 +1,6 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
-import escapeHtml from "escape-html";
 import {ParsingCursor} from "../parsingCursor.js";
+import {escapeHtml} from "../utils.js";
 
 export class P_Text extends P_Parser {
 	id: string = "text";

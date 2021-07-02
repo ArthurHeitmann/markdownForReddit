@@ -1,7 +1,7 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
 import {ParsingCursor} from "../parsingCursor.js";
-import escapeHtml from "escape-html";
+import {escapeHtml, escapeRegex} from "../utils.js";
 
 interface StyleType {
 	charSequence: string;
@@ -41,7 +41,8 @@ export class P_StyledText extends P_Parser {
 			if (
 				!this.excludedCharSeq.includes(styleType.charSequence)
 				&&
-				this.cursor.remainingText.startsWith(styleType.charSequence)						// starts with right chars
+				// starts & ends with right chars
+				new RegExp("^" + escapeRegex(styleType.charSequence) + ".*" + escapeRegex(styleType.charSequenceEnd || styleType.charSequence), "s").test(this.cursor.remainingText)
 				&&
 				/^(?!\s)/.test(this.cursor.remainingText.slice(styleType.charSequence.length))		// isn't followed by \s
 				&&
@@ -59,7 +60,7 @@ export class P_StyledText extends P_Parser {
 				if (
 					!this.excludedCharSeq.includes(styleType.charSequence)
 					&&
-					this.cursor.remainingText.startsWith(styleType.charSequence)
+					new RegExp("^" + escapeRegex(styleType.charSequence) + ".*" + escapeRegex(styleType.charSequenceEnd || styleType.charSequence), "s").test(this.cursor.remainingText)
 				) {
 					this.styleType = styleType;
 					break;

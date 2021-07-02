@@ -19,4 +19,18 @@ export function parseMarkdown(markdown: string): string {
 	return rootParser.toHtmlString();
 }
 
-console.log(`:${parseMarkdown(`    c`)}:`);
+console.log(`:${parseMarkdown(`
+
+\`\`\`\`
+1
+
+\`\`\`
+
+in between
+
+\`\`\`
+
+2
+\`\`\`\`
+
+`)}:`);

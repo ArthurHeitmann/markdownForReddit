@@ -134,6 +134,24 @@ describe("Markdown to HTML", () => {
 					testMarkdown("    b1 l1\n        b1 l2\n\n    b2 l1\n        b2 l2", `<pre><code>b1 l1\n    b1 l2</code></pre><pre><code>b2 l1\n    b2 l2</code></pre>`)
 				});
 			});
+
+			describe("Fenced", () => {
+				it("Single Line", () => {
+					testMarkdown("```\ncode\n```", `<pre><code>code</code></pre>`)
+				});
+
+				it("Multi Line", () => {
+					testMarkdown("```\ncode l1 \n\nl2\n```", `<pre><code>code l1 \n\nl2</code></pre>`)
+				});
+
+				it("Multiple Blocks", () => {
+					testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<pre><code>block 1</code></pre><pre><code>block 2</code></pre>`)
+				});
+
+				it("Nested backticks", () => {
+					testMarkdown("````\n```\nnested\n```\n````", `<pre><code>\`\`\`\nnested\n\`\`\`</code></pre>`)
+				});
+			});
 		});
 	});
 })

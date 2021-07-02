@@ -17,7 +17,7 @@ export class P_InlineCode extends P_Parser {
 	private parsingState: InlineCodeParsingState = InlineCodeParsingState.tickStart;
 
 	canStart(): boolean {
-		return /^`+\s*/.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\";
+		return /^(`+).*\1/.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\";
 	}
 
 	parseChar(): AfterParseResult {
