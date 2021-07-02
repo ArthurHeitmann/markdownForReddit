@@ -6,10 +6,10 @@ export const cases: string[][] = [
 	["Escape\\^superscript", `<p>Escape^superscript</p>`],
 	["~~normal strikethrough~~", `<p><del>normal strikethrough</del></p>`],
 	["\\~~escaped strikethrough~~", `<p>~~escaped strikethrough~~</p>`],
-	['<test>', `<p>&lt;test&gt;</p>`],
+	['<tests>', `<p>&lt;test&gt;</p>`],
 	['words_with_underscores', `<p>words_with_underscores</p>`],
 	['words*with*asterisks', `<p>words<em>with</em>asterisks</p>`],
-	['~test', `<p>~test</p>`],
+	['~tests', `<p>~test</p>`],
 	// ["# Heading 1", `<h1>Heading 1</h1>`],
 	// ["## Heading 2", `<h2>Heading 2</h2>`],
 	// from https://github.com/gamefreak/snuownd/blob/master/test.js
@@ -43,39 +43,39 @@ export const cases: string[][] = [
 	// '[foo](http://bar\nbar)':
 	//     '<p><a href="http://bar%0Abar">foo</a></p>\n',
 	//
-	// '/r/test':
-	//     '<p><a href="/r/test">/r/test</a></p>\n',
+	// '/r/tests':
+	//     '<p><a href="/r/tests">/r/tests</a></p>\n',
 	//
-	// 'Words words /r/test words':
-	//     '<p>Words words <a href="/r/test">/r/test</a> words</p>\n',
+	// 'Words words /r/tests words':
+	//     '<p>Words words <a href="/r/tests">/r/tests</a> words</p>\n',
 	//
 	// '/r/':
 	//     '<p>/r/</p>\n',
 	//
-	// 'escaped \\/r/test':
-	//     '<p>escaped /r/test</p>\n',
+	// 'escaped \\/r/tests':
+	//     '<p>escaped /r/tests</p>\n',
 	//
 	// 'ampersands http://www.google.com?test&blah':
 	//     '<p>ampersands <a href="http://www.google.com?test&amp;blah">http://www.google.com?test&amp;blah</a></p>\n',
 	//
-	// '[_regular_ link with nesting](/test)':
-	//     '<p><a href="/test"><em>regular</em> link with nesting</a></p>\n',
+	// '[_regular_ link with nesting](/tests)':
+	//     '<p><a href="/tests"><em>regular</em> link with nesting</a></p>\n',
 	//
-	// ' www.a.co?with&test':
-	//     '<p><a href="http://www.a.co?with&amp;test">www.a.co?with&amp;test</a></p>\n',
+	// ' www.a.co?with&tests':
+	//     '<p><a href="http://www.a.co?with&amp;test">www.a.co?with&amp;tests</a></p>\n',
 	//
 	//
 	// 'anywhere\x03, you':
 	//     '<p>anywhere, you</p>\n',
 	//
-	// '[Test](//test)':
-	//     '<p><a href="//test">Test</a></p>\n',
+	// '[Test](//tests)':
+	//     '<p><a href="//tests">Test</a></p>\n',
 	//
-	// '[Test](//#test)':
-	//     '<p><a href="//#test">Test</a></p>\n',
+	// '[Test](//#tests)':
+	//     '<p><a href="//#tests">Test</a></p>\n',
 	//
-	// '[Test](#test)':
-	//     '<p><a href="#test">Test</a></p>\n',
+	// '[Test](#tests)':
+	//     '<p><a href="#tests">Test</a></p>\n',
 	//
 	// '[Test](git://github.com)':
 	//     '<p><a href="git://github.com">Test</a></p>\n',
@@ -86,14 +86,14 @@ export const cases: string[][] = [
 	// '/r/sr_with_underscores':
 	//     '<p><a href="/r/sr_with_underscores">/r/sr_with_underscores</a></p>\n',
 	//
-	// '[Test](///#test)':
-	//     '<p><a href="///#test">Test</a></p>\n',
+	// '[Test](///#tests)':
+	//     '<p><a href="///#tests">Test</a></p>\n',
 	//
-	// '/r/multireddit+test+yay':
-	//     '<p><a href="/r/multireddit+test+yay">/r/multireddit+test+yay</a></p>\n',
+	// '/r/multireddit+tests+yay':
+	//     '<p><a href="/r/multireddit+tests+yay">/r/multireddit+tests+yay</a></p>\n',
 	//
-	// '/u/test':
-	//     '<p><a href="/u/test">/u/test</a></p>\n',
+	// '/u/tests':
+	//     '<p><a href="/u/tests">/u/tests</a></p>\n',
 	//
 	// 'blah \\':
 	//     '<p>blah \\</p>\n',
