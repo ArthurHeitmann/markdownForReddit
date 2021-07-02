@@ -21,16 +21,6 @@ export function parseMarkdown(markdown: string): string {
 
 console.log(`:${parseMarkdown(`
 
-\`\`\`\`
-1
-
-\`\`\`
-
-in between
-
-\`\`\`
-
-2
-\`\`\`\`
+---
 
 `)}:`);

@@ -115,43 +115,51 @@ describe("Markdown to HTML", () => {
 				testMarkdown(`\\>!text 1!<`, `<p>&gt;!text 1!&lt;</p>`)
 			});
 		});
+	});
 
-		describe("Multiline Code", () => {
-			describe("Leading Spaces", () => {
-				it("Single line", () => {
-					testMarkdown("    code", `<pre><code>code</code></pre>`)
-				});
-
-				it("Multi line", () => {
-					testMarkdown("    code1\n    code2\n    \n    code3\n    code4\n", `<pre><code>code1\ncode2\n\ncode3\ncode4</code></pre>`)
-				});
-
-				it("No formatting in code", () => {
-					testMarkdown("    code *i* >!sp!<  \n        ^sup", `<pre><code>code *i* &gt;!sp!&lt;  \n    ^sup</code></pre>`)
-				});
-
-				it("Multiple blocks", () => {
-					testMarkdown("    b1 l1\n        b1 l2\n\n    b2 l1\n        b2 l2", `<pre><code>b1 l1\n    b1 l2</code></pre><pre><code>b2 l1\n    b2 l2</code></pre>`)
-				});
+	describe("Multiline Code", () => {
+		describe("Leading Spaces", () => {
+			it("Single line", () => {
+				testMarkdown("    code", `<pre><code>code</code></pre>`)
 			});
 
-			describe("Fenced", () => {
-				it("Single Line", () => {
-					testMarkdown("```\ncode\n```", `<pre><code>code</code></pre>`)
-				});
+			it("Multi line", () => {
+				testMarkdown("    code1\n    code2\n    \n    code3\n    code4\n", `<pre><code>code1\ncode2\n\ncode3\ncode4</code></pre>`)
+			});
 
-				it("Multi Line", () => {
-					testMarkdown("```\ncode l1 \n\nl2\n```", `<pre><code>code l1 \n\nl2</code></pre>`)
-				});
+			it("No formatting in code", () => {
+				testMarkdown("    code *i* >!sp!<  \n        ^sup", `<pre><code>code *i* &gt;!sp!&lt;  \n    ^sup</code></pre>`)
+			});
 
-				it("Multiple Blocks", () => {
-					testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<pre><code>block 1</code></pre><pre><code>block 2</code></pre>`)
-				});
+			it("Multiple blocks", () => {
+				testMarkdown("    b1 l1\n        b1 l2\n\n    b2 l1\n        b2 l2", `<pre><code>b1 l1\n    b1 l2</code></pre><pre><code>b2 l1\n    b2 l2</code></pre>`)
+			});
+		});
 
-				it("Nested backticks", () => {
-					testMarkdown("````\n```\nnested\n```\n````", `<pre><code>\`\`\`\nnested\n\`\`\`</code></pre>`)
-				});
+		describe("Fenced", () => {
+			it("Single Line", () => {
+				testMarkdown("```\ncode\n```", `<pre><code>code</code></pre>`)
+			});
+
+			it("Multi Line", () => {
+				testMarkdown("```\ncode l1 \n\nl2\n```", `<pre><code>code l1 \n\nl2</code></pre>`)
+			});
+
+			it("Multiple Blocks", () => {
+				testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<pre><code>block 1</code></pre><pre><code>block 2</code></pre>`)
+			});
+
+			it("Nested backticks", () => {
+				testMarkdown("````\n```\nnested\n```\n````", `<pre><code>\`\`\`\nnested\n\`\`\`</code></pre>`)
 			});
 		});
 	});
-})
+
+	it("Horizontal Line", () => {
+		for (const ch of ["-", "*", "_"]) {
+			testMarkdown(ch.repeat(3), `<hr>`)
+			testMarkdown(ch.repeat(5), `<hr>`)
+			testMarkdown("\\" + ch.repeat(3), `<p>${ch.repeat(3)}</p>`)
+		}
+	});
+});
