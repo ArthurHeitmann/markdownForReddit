@@ -1,10 +1,10 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
-import {P_SimpleText} from "./P_SimpleText.js";
+import {BasicTextOptions, P_BasicText} from "./P_BasicText.js";
 
 export class P_Paragraph extends P_Parser {
 	id: string = "paragraph";
 	canChildrenRepeat: boolean = false;
-	possibleChildren: ParserType[] = [ParserType.from(P_SimpleText)];
+	possibleChildren: ParserType[] = [ParserType.from(P_BasicText, <BasicTextOptions> { allowLinks: true })];
 
 	parseChar(): AfterParseResult {
 		if (

@@ -10,6 +10,7 @@ export class ParsingCursor {
 	remainingText: string;
 	currentChar: string;
 	previousChar: string = "";
+	previousText: string = "";
 	isLastChar: boolean;
 
 	constructor(markdown: string) {
@@ -26,6 +27,7 @@ export class ParsingCursor {
 		this.charIndex++;
 		this.currentChar = this.allText[this.charIndex];
 		this.previousChar = this.allText[this.charIndex - 1];
+		this.previousText = this.allText.slice(0, this.charIndex);
 		this.remainingText = this.allText.slice(this.charIndex);
 		this.isLastChar = this.charIndex + 1 === this.allText.length;
 		// reached end of current line

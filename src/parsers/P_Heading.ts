@@ -3,7 +3,7 @@ import {P_BasicText} from "./P_BasicText.js";
 
 export class P_Heading extends P_Parser {
 	id: string = "Heading";
-	canChildrenRepeat: boolean = true;
+	canChildrenRepeat: boolean = false;
 	possibleChildren: ParserType[] = [ParserType.from(P_BasicText)];
 
 	private headingLevel: number = 0;

@@ -1,5 +1,5 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
-import {P_BasicText} from "./P_BasicText.js";
+import {BasicTextOptions, P_BasicText} from "./P_BasicText.js";
 import {ParsingCursor} from "../parsingCursor.js";
 import {escapeHtml, escapeRegex} from "../utils.js";
 
@@ -66,7 +66,8 @@ export class P_StyledText extends P_Parser {
 					break;
 				}
 			}
-			this.possibleChildren[0] = ParserType.from(P_BasicText, this.excludedCharSeq.concat(this.styleType.charSequence));
+			this.possibleChildren[0] = ParserType.from(P_BasicText,
+				<BasicTextOptions> { excludedStyleTypes: this.excludedCharSeq.concat(this.styleType.charSequence) });
 			this.parsingState = ParsingState.start;
 		}
 

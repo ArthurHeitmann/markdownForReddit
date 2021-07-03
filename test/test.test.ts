@@ -1,8 +1,13 @@
 import {parseMarkdown} from "../src/main.js";
 import {expect} from 'chai';
 
+const debug = true;
+
 function testMarkdown(markdown, expectedHtml) {
-	expect(parseMarkdown(markdown)).to.equal(expectedHtml);
+	const generatedHtml = parseMarkdown(markdown);
+	if (debug)
+		console.log(`markdown: ${markdown}\n  expected: ${expectedHtml}\n  generated: ${generatedHtml}\n\n`)
+	expect(generatedHtml).to.equal(expectedHtml);
 }
 
 describe("Markdown to HTML", () => {
@@ -115,6 +120,11 @@ describe("Markdown to HTML", () => {
 				testMarkdown(`\\>!text 1!<`, `<p>&gt;!text 1!&lt;</p>`)
 			});
 		});
+
+		it("¯\\_(ツ)_/¯", () => {
+			testMarkdown("¯\\\\\\_(ツ)_/¯", `<p>¯\\_(ツ)_/¯</p>`)
+			testMarkdown("¯\\_(ツ)_/¯", `<p>¯_(ツ)_/¯</p>`)
+		});
 	});
 
 	describe("Multiline Code", () => {
@@ -214,6 +224,87 @@ describe("Markdown to HTML", () => {
 
 		it("Escaped html chars", () => {
 			testMarkdown("<script></script>", `<p>&lt;script&gt;&lt;/script&gt;</p>`)
+		});
+	});
+
+	describe.skip("Lists", () => {
+		describe("Unordered", () => {
+			it("simple", () => {
+				testMarkdown("- list", `<ul><li>list</li></ul>`)
+			});
+
+			it("multi-entry", () => {
+				testMarkdown("- l1\n- l2", `<ul><li>l1</li><li>l2</li></ul>`)
+			});
+
+			it("multi-line", () => {
+				testMarkdown("- l1\n  l2", `<ul><li>l1 l2</li></ul>`)
+				testMarkdown("- l1\nl2", `<ul><li>l1 l2</li></ul>`)
+			});
+
+			it("styled", () => {
+				testMarkdown("- *i* ^sup", `<ul><li><em>i</em> <sup>sup</sup></li></ul>`)
+			});
+
+			it("escaped", () => {
+				testMarkdown("\\- not a list", `<p>- not a list</p>`)
+			});
+
+			it("nested", () => {
+				testMarkdown("- number 1\n  - n 1.1\n  - n1.2\n- number 2\n  - n 2.1\n  - n 2.2\n    - 2.2.1\n    -" +
+					" 2.2.2",
+					"<ul>" +
+						"<li>number 1</li>" +
+					"</ul>")
+			});
+		});
+	});
+
+	describe("Links", () => {
+		describe("reddit internal links", () => {
+			it("subreddit", () => {
+				testMarkdown("r/all", `<p><a href="/r/all">r/all</a></p>`)
+				testMarkdown("/r/all", `<p><a href="/r/all">/r/all</a></p>`)
+				testMarkdown("r/reddit.com", `<p><a href="/r/reddit.com">r/reddit.com</a></p>`)
+				testMarkdown("/r/some_sub", `<p><a href="/r/some_sub">/r/some_sub</a></p>`)
+			});
+
+			it("user", () => {
+				testMarkdown("u/all", `<p><a href="/u/all">u/all</a></p>`)
+				testMarkdown("/u/all", `<p><a href="/u/all">/u/all</a></p>`)
+				testMarkdown("user/all", `<p><a href="/user/all">user/all</a></p>`)
+				testMarkdown("/user/all", `<p><a href="/user/all">/user/all</a></p>`)
+			});
+
+			it("combinations", () => {
+				testMarkdown("r/pics+announcements+test+reddit.com", `<p><a href="/r/pics+announcements+test+reddit.com">r/pics+announcements+test+reddit.com</a></p>`)
+				testMarkdown("u/all/m/multi", `<p><a href="/u/all/m/multi">u/all/m/multi</a></p>`)
+				testMarkdown("(r/all)", `<p>(<a href="/r/all">r/all</a>)</p>`)
+			});
+
+			it("non links", () => {
+				testMarkdown("r/all.nope", `<p><a href="/r/all">r/all</a>.nope</p>`)
+				testMarkdown("r/", `<p>r/</p>`)
+				testMarkdown("x/sub", `<p>x/sub</p>`)
+				testMarkdown("\\/r/all", `<p>/r/all</p>`)
+			});
+		});
+
+		describe("Schema Links", () => {
+			it("schemas", () => {
+				testMarkdown("https://reddit.com", `<p><a href="https://reddit.com">https://reddit.com</a></p>`)
+				testMarkdown("https://reddit.com/r/all/top?t=all&count=10", `<p><a href="https://reddit.com/r/all/top?t=all&count=10">https://reddit.com/r/all/top?t=all&count=10</a></p>`)
+			});
+
+			it("different environments", () => {
+				testMarkdown("text https://reddit.com text2", `<p>text <a href="https://reddit.com">https://reddit.com</a> text2</p>`)
+				testMarkdown("(https://reddit.com)", `<p>(<a href="https://reddit.com">https://reddit.com</a>)</p>`)
+			});
+
+			it("non links", () => {
+				testMarkdown("texthttps://reddit.com", `<p>texthttps://reddit.com</p>`)
+				testMarkdown("bla://x.com", `<p>bla://x.com</p>`)
+			});
 		});
 	});
 });
