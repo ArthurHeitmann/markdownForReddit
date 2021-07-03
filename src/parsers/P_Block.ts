@@ -5,11 +5,13 @@ import {P_CodeMultilineFenced} from "./P_CodeMultilineFenced.js";
 import {P_HorizontalLine} from "./P_HorizontalLine.js";
 import {P_Quote} from "./P_Quote.js";
 import {P_Heading} from "./P_Heading.js";
+import {P_Table} from "./P_Table.js";
 
 export class P_Block extends P_Parser {
 	id: string = "block";
 	possibleChildren: ParserType[] = [
 		ParserType.from(P_Quote),
+		ParserType.from(P_Table),
 		ParserType.from(P_CodeMultilineSpaces),
 		ParserType.from(P_CodeMultilineFenced),
 		ParserType.from(P_Heading),

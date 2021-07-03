@@ -3,6 +3,8 @@ import {P_Root} from "./parsers/P_Root.js";
 import {ParsingCursor} from "./parsingCursor.js";
 
 export function parseMarkdown(markdown: string): string {
+	markdown = markdown.replace(/^(\s*\n)*|\s*$/g, "");
+
 	const cursor = new ParsingCursor(markdown);
 	const rootParser = new P_Root(cursor);
 	let parseResult: AfterParseResult = AfterParseResult.consumed;
@@ -20,10 +22,12 @@ export function parseMarkdown(markdown: string): string {
 }
 
 console.log(`:${parseMarkdown(`
-> 1
-> 
-> 2
-> 
-> # H1 \`code\`
 
-`)}:`);
+
+| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+
+# h
+
+`
+)}:`);

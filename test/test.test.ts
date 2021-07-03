@@ -307,4 +307,49 @@ describe("Markdown to HTML", () => {
 			});
 		});
 	});
+
+	describe("Tables", () => {
+		it("Header Only Table", () => {
+			testMarkdown("" +
+				"| Header 1 | Header 2 | Header 3 |\n" +
+				"|----------|----------|----------|\n",
+				`<table><thead><tr><th>Header 1</th><th>Header 2</th><th>Header 3</th></tr></thead><tbody></tbody></table>`)
+		});
+
+		it("Simple Table", () => {
+			testMarkdown("" +
+				"| Header 1 | Header 2 | Header 3 |\n" +
+				"|----------|----------|----------|\n" +
+				"| row 1    | r/all    | *2*      |\n" +
+				"| - row 2  | `val 2`  | ^3       |",
+				`<table><thead><tr><th>Header 1</th><th>Header 2</th><th>Header 3</th></tr></thead><tbody><tr><td>row 1</td><td><a href="/r/all">r/all</a></td><td><em>2</em></td></tr><tr><td>- row 2</td><td><code>val 2</code></td><td><sup>3</sup></td></tr></tbody></table>`)
+		});
+
+		it("Aligned table", () => {
+			testMarkdown("" +
+				"| Header 1 | Header 2 | Header 3 |\n" +
+				"|:---------|---------:|:--------:|\n" +
+				"| row 1    | r/all    | *2*      |\n" +
+				"| - row 2  | `val 2`  | ^3       |",
+				`<table><thead><tr><th align="left">Header 1</th><th align="right">Header 2</th><th align="center">Header 3</th></tr></thead><tbody><tr><td align="left">row 1</td><td align="right"><a href="/r/all">r/all</a></td><td align="center"><em>2</em></td></tr><tr><td align="left">- row 2</td><td align="right"><code>val 2</code></td><td align="center"><sup>3</sup></td></tr></tbody></table>`)
+			
+		});
+		it("Simple Table (minimal)", () => {
+			testMarkdown("" +
+				"| Header 1 | Header 2 | Header 3 |\n" +
+				"|-|-|-|\n" +
+				"| row 1 | r/all | *2* |\n" +
+				"| - row 2 | `val 2` | ^3 |", 
+				`<table><thead><tr><th>Header 1</th><th>Header 2</th><th>Header 3</th></tr></thead><tbody><tr><td>row 1</td><td><a href="/r/all">r/all</a></td><td><em>2</em></td></tr><tr><td>- row 2</td><td><code>val 2</code></td><td><sup>3</sup></td></tr></tbody></table>`)
+		});
+
+		it("Aligned table (minimal)", () => {
+			testMarkdown("" +
+				"| Header 1 | Header 2 | Header 3 |\n" +
+				"|:-|-:|:-:|\n" +
+				"| row 1 | r/all | *2* |\n" +
+				"| - row 2 | `val 2` | ^3 |",
+				`<table><thead><tr><th align="left">Header 1</th><th align="right">Header 2</th><th align="center">Header 3</th></tr></thead><tbody><tr><td align="left">row 1</td><td align="right"><a href="/r/all">r/all</a></td><td align="center"><em>2</em></td></tr><tr><td align="left">- row 2</td><td align="right"><code>val 2</code></td><td align="center"><sup>3</sup></td></tr></tbody></table>`)
+		});
+	});
 });
