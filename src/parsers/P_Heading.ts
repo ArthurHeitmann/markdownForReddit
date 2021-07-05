@@ -19,7 +19,7 @@ export class P_Heading extends P_Parser {
 				this.parsingState = ParsingState.content;
 				return AfterParseResult.consumed;
 			}
-			else if (this.parsingState) {
+			else if (this.cursor.currentChar === "#") {
 				this.headingLevel++;
 				return AfterParseResult.consumed;
 			}

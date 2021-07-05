@@ -6,7 +6,7 @@ const debug = true;
 function testMarkdown(markdown, expectedHtml) {
 	const generatedHtml = parseMarkdown(markdown);
 	if (debug)
-		console.log(`markdown: ${markdown}\n  expected: ${expectedHtml}\n  generated: ${generatedHtml}\n\n`)
+		console.log(`markdown: \n${markdown}\n  expected:  ${expectedHtml}\n  generated: ${generatedHtml}\n\n`)
 	expect(generatedHtml).to.equal(expectedHtml);
 }
 
@@ -148,19 +148,19 @@ describe("Markdown to HTML", () => {
 
 		describe("Fenced", () => {
 			it("Single Line", () => {
-				testMarkdown("```\ncode\n```", `<pre><code>code</code></pre>`)
+				testMarkdown("```\ncode\n```", `<code>code</code>`)
 			});
 
 			it("Multi Line", () => {
-				testMarkdown("```\ncode l1 \n\nl2\n```", `<pre><code>code l1 \n\nl2</code></pre>`)
+				testMarkdown("```\ncode l1 \n\nl2\n```", `<code>code l1 \n\nl2</code>`)
 			});
 
 			it("Multiple Blocks", () => {
-				testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<pre><code>block 1</code></pre><pre><code>block 2</code></pre>`)
+				testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<code>block 1</code><code>block 2</code>`)
 			});
 
 			it("Nested backticks", () => {
-				testMarkdown("````\n```\nnested\n```\n````", `<pre><code>\`\`\`\nnested\n\`\`\`</code></pre>`)
+				testMarkdown("````\n```\nnested\n```\n````", `<code>\`\`\`\nnested\n\`\`\`</code>`)
 			});
 		});
 	});
@@ -227,19 +227,28 @@ describe("Markdown to HTML", () => {
 		});
 	});
 
-	describe.skip("Lists", () => {
+	describe("Lists", () => {
 		describe("Unordered", () => {
 			it("simple", () => {
 				testMarkdown("- list", `<ul><li>list</li></ul>`)
 			});
 
 			it("multi-entry", () => {
-				testMarkdown("- l1\n- l2", `<ul><li>l1</li><li>l2</li></ul>`)
+				testMarkdown("" +
+					"- l1\n" +
+					"- l2",
+					`<ul><li>l1</li><li>l2</li></ul>`)
 			});
 
 			it("multi-line", () => {
-				testMarkdown("- l1\n  l2", `<ul><li>l1 l2</li></ul>`)
-				testMarkdown("- l1\nl2", `<ul><li>l1 l2</li></ul>`)
+				testMarkdown("" +
+					"- l1\n" +
+					"  l2",
+					`<ul><li>l1 l2</li></ul>`)
+				testMarkdown("" +
+					"- l1  \n" +
+					"  l2",
+					`<ul><li>l1<br>\nl2</li></ul>`)
 			});
 
 			it("styled", () => {
@@ -251,11 +260,32 @@ describe("Markdown to HTML", () => {
 			});
 
 			it("nested", () => {
-				testMarkdown("- number 1\n  - n 1.1\n  - n1.2\n- number 2\n  - n 2.1\n  - n 2.2\n    - 2.2.1\n    -" +
-					" 2.2.2",
+				testMarkdown("" +
+					"- number 1\n" +
+					"  - n 1.1\n" +
+					"  - n 1.2\n" +
+					"- number 2\n" +
+					"  - n 2.1\n" +
+					"  - n 2.2\n" +
+					"    - 2.2.1\n" +
+					"    - 2.2.2 *i*",
 					"<ul>" +
-						"<li>number 1</li>" +
+						"<li>number 1<ul>" +
+							"<li>n 1.1</li>" +
+							"<li>n 1.2</li>" +
+						"</ul></li>" +
+						"<li>number 2<ul>" +
+							"<li>n 2.1</li>" +
+							"<li>n 2.2<ul>" +
+								"<li>2.2.1</li>" +
+								"<li>2.2.2 <em>i</em></li>" +
+							"</ul></li>" +
+						"</ul></li>" +
 					"</ul>")
+			});
+
+			it("blocks", () => {
+
 			});
 		});
 	});

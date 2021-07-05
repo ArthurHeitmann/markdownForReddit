@@ -23,11 +23,11 @@ export function parseMarkdown(markdown: string): string {
 
 console.log(`:${parseMarkdown(`
 
+- Ü
+  
+  # h1
+  
+  ---
+- x
 
-| Header 1 | Header 2 | Header 3 |
-|----------|----------|----------|
-
-# h
-
-`
-)}:`);
+`)}:`);

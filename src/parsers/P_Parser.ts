@@ -8,7 +8,7 @@ export enum ParsingState {
 	notStarted, start, content, end, completed
 }
 
-type ParserConstrSignature = new (state: ParsingCursor, ...other: any) => P_Parser;
+type ParserConstrSignature = new (cursor: ParsingCursor, ...other: any) => P_Parser;
 
 export class ParserType {
 	private otherParams: any[];
@@ -31,12 +31,12 @@ export abstract class P_Parser {
 	abstract possibleChildren: ParserType[];
 	abstract canChildrenRepeat: boolean;
 	protected cursor: ParsingCursor;
-	protected children: P_Parser[] = [];
+	children: P_Parser[] = [];
 	protected parsingChild: P_Parser = null;
 	private tryTextAlternative = false;
 
-	constructor(state: ParsingCursor) {
-		this.cursor = state;
+	constructor(cursor: ParsingCursor) {
+		this.cursor = cursor;
 	}
 
 	canStart(): boolean {
