@@ -145,7 +145,12 @@ export class P_List extends P_Parser {
 			else if (this.contentParsingState === ContentParsingState.blocks) {
 				if (this.cursor.currentChar === "\n") {
 					this.parsingState = ListParsingState.whitespace;
-					if (this.isNextLineNestedList()) {
+					if (this.isNextLineNewEntry()) {
+						this.isNewLine = true;
+						this.parsingState = ListParsingState.start;
+						this.contentParsingState = ContentParsingState.text;
+					}
+					else if (this.isNextLineNestedList()) {
 						this.isNewLine = true;
 						this.contentParsingState = ContentParsingState.sublist;
 					}

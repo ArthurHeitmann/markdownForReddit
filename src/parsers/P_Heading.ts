@@ -15,12 +15,12 @@ export class P_Heading extends P_Parser {
 
 	parseChar(): AfterParseResult {
 		if (this.parsingState === ParsingState.start) {
-			if (this.cursor.currentChar === " ") {
-				this.parsingState = ParsingState.content;
+			if (this.cursor.currentChar === "#") {
+				this.headingLevel++;
 				return AfterParseResult.consumed;
 			}
-			else if (this.cursor.currentChar === "#") {
-				this.headingLevel++;
+			if (this.cursor.currentChar === " ") {
+				this.parsingState = ParsingState.content;
 				return AfterParseResult.consumed;
 			}
 			this.parsingState = ParsingState.content;

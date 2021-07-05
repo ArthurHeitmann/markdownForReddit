@@ -285,7 +285,111 @@ describe("Markdown to HTML", () => {
 			});
 
 			it("blocks", () => {
+				testMarkdown("" +
+					"- normal entry\n" +
+					"- block entry\n" +
+					"  - p1\n" +
+					"    \n" +
+					"    # h1\n" +
+					"  - normal nested entry\n" +
+					"    - nested block entry\n" +
+					"      \n" +
+					"      > quote\n" +
+					"- end",
+					`<ul><li>normal entry</li><li>block entry<ul><li><p>p1</p><h1>h1</h1></li><li>normal nested entry<ul><li><p>nested block entry</p><blockquote><p>quote</p></blockquote></li></ul></li></ul></li><li>end</li></ul>`)
+			});
+		});
 
+		describe("Ordered", () => {
+			it("simple", () => {
+				testMarkdown("1. list", `<ol><li>list</li></ol>`)
+			});
+
+			it("multi-entry", () => {
+				testMarkdown("" +
+					"1. l1\n" +
+					"2. l2",
+					`<ol><li>l1</li><li>l2</li></ol>`)
+			});
+
+			it("multi-line", () => {
+				testMarkdown("" +
+					"1. l1\n" +
+					"   l2",
+					`<ol><li>l1 l2</li></ol>`)
+				testMarkdown("" +
+					"1. l1  \n" +
+					"   l2",
+					`<ol><li>l1<br>\nl2</li></ol>`)
+			});
+
+			it("styled", () => {
+				testMarkdown("1. *i* ^sup", `<ol><li><em>i</em> <sup>sup</sup></li></ol>`)
+			});
+
+			it("escaped", () => {
+				testMarkdown("\\1. not a list", `<p>\\1. not a list</p>`)
+			});
+
+			it("nested", () => {
+				testMarkdown("" +
+					"1. number 1\n" +
+					"   1. n 1.1\n" +
+					"   1. n 1.2\n" +
+					"2. number 2\n" +
+					"   1. n 2.1\n" +
+					"   1. n 2.2\n" +
+					"      1. 2.2.1\n" +
+					"      1. 2.2.2 *i*",
+					"<ol>" +
+						"<li>number 1<ol>" +
+							"<li>n 1.1</li>" +
+							"<li>n 1.2</li>" +
+						"</ol></li>" +
+						"<li>number 2<ol>" +
+							"<li>n 2.1</li>" +
+							"<li>n 2.2<ol>" +
+								"<li>2.2.1</li>" +
+								"<li>2.2.2 <em>i</em></li>" +
+							"</ol></li>" +
+						"</ol></li>" +
+					"</ol>")
+			});
+
+			it("blocks", () => {
+				testMarkdown("" +
+					"1. normal entry\n" +
+					"2. block entry\n" +
+					"   1. p1\n" +
+					"      \n" +
+					"      # h1\n" +
+					"   2. normal nested entry\n" +
+					"      1. nested block entry\n" +
+					"         \n" +
+					"         > quote\n" +
+					"3. end",
+					`<ol><li>normal entry</li><li>block entry<ol><li><p>p1</p><h1>h1</h1></li><li>normal nested entry<ol><li><p>nested block entry</p><blockquote><p>quote</p></blockquote></li></ol></li></ol></li><li>end</li></ol>`)
+			});
+		});
+
+		it("Everything", () => {
+			it("blocks", () => {
+				testMarkdown("" +
+					"1. normal *entry*\n" +
+					"2. block ^entry\n" +
+					"   - p1\n" +
+					"     \n" +
+					"     # h1\n" +
+					"   - normal nested entry\n" +
+					"     1. nested block entry\n" +
+					"        \n" +
+					"        > quote\n" +
+					"  - line 1  \n" +
+					"    line 2\n" +
+					"    - line 1.1\n" +
+					"      line 2.2" +
+					"3. end",
+					`<ol><li>normal <em>entry</em></li><li>block <sup>entry</sup><ul><li><p>p1</p><h1>h1</h1></li><li>normal nested entry<ol><li><p>nested block entry</p><blockquote><p>quote</p></blockquote></li></ol></li><li>line 1<br>\nline 2<ul><li>line 1.1. line 2.2</li></ul></li></ul></li><li>end</li></ol>`)
 			});
 		});
 	});
