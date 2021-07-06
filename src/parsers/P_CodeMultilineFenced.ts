@@ -46,7 +46,7 @@ export class P_CodeMultilineFenced extends P_Parser {
 
 	toHtmlString(): string {
 		if (this.parsingState === ParsingState.completed)
-			return `<code>${super.toHtmlString()}</code>`;
+			return `<pre><code>\n${super.toHtmlString()}\n</code></pre>`;
 		else
 			return `${"`".repeat(this.parsedStartTicks)}${super.toHtmlString()}`;
 	}

@@ -6,6 +6,7 @@ export class P_Root extends P_Parser {
 	id: string = "root";
 	possibleChildren: ParserType[] = [ParserType.from(P_Block)];
 	canChildrenRepeat: boolean = true;
+	joinChars = "\n\n";
 
 	constructor(state: ParsingCursor) {
 		super(state);

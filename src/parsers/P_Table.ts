@@ -162,17 +162,17 @@ export class P_Table extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		let out = "<table><thead><tr>";
+		let out = "<table><thead>\n<tr>\n";
 		for (let i = 0; i < this.columns; ++i) {
-			out += `<th${this.columnAlignment[i] ? ` align="${this.columnAlignment[i]}"` : ""}>${this.headerValues[i].toHtmlString()}</th>`
+			out += `<th${this.columnAlignment[i] ? ` align="${this.columnAlignment[i]}"` : ""}>${this.headerValues[i].toHtmlString()}</th>\n`
 		}
-		out += `</tr></thead><tbody>`;
+		out += `</tr>\n</thead><tbody>\n`;
 		for (const row of this.cellValues) {
-			out += `<tr>`;
+			out += `<tr>\n`;
 			for (let i = 0; i < this.columns; ++i) {
-				out += `<td${this.columnAlignment[i] ? ` align="${this.columnAlignment[i]}"` : ""}>${row[i].toHtmlString()}</td>`
+				out += `<td${this.columnAlignment[i] ? ` align="${this.columnAlignment[i]}"` : ""}>${row[i].toHtmlString()}</td>\n`;
 			}
-			out += `</tr>`;
+			out += `</tr>\n`;
 		}
 		out += `</tbody></table>`;
 		return out;

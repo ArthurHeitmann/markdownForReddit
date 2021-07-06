@@ -192,18 +192,18 @@ export class P_List extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		let out = `<${this.listType.tagName}>`;
-		for (const entry of this.entries) {
-			out += `<li>`;
+		let out = `<${this.listType.tagName}>\n`;
+		out += this.entries.map(entry => {
+			let text = `<li>`;
 			if (entry.textOnly)
-				out += entry.textOnly.toHtmlString().replace(/^\s+|\s+$/, "");
-			for (const block of entry.blocks)
-				out += block.toHtmlString();
+				text += entry.textOnly.toHtmlString().replace(/^\s+|\s+$/, "");
+				text += entry.blocks.map(block => block.toHtmlString()).join("\n\n");
 			if (entry.sublist)
-				out += entry.sublist.toHtmlString();
-			out += `</li>`;
-		}
-		out += `</${this.listType.tagName}>`;
+				text += "\n\n" + entry.sublist.toHtmlString();
+			text += `</li>`;
+			return text;
+		}).join("\n");
+		out += `\n</${this.listType.tagName}>`;
 		return out;
 	}
 

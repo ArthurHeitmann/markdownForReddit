@@ -30,6 +30,7 @@ export abstract class P_Parser {
 	abstract id: string;
 	abstract possibleChildren: ParserType[];
 	abstract canChildrenRepeat: boolean;
+	protected joinChars = "";
 	protected cursor: ParsingCursor;
 	children: P_Parser[] = [];
 	protected parsingChild: P_Parser = null;
@@ -91,6 +92,6 @@ export abstract class P_Parser {
 	}
 
 	toHtmlString(): string {
-		return this.children.map(ch => ch.toHtmlString()).join("");
+		return this.children.map(ch => ch.toHtmlString()).join(this.joinChars);
 	};
 }

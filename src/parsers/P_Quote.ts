@@ -5,6 +5,7 @@ export class P_Quote extends P_Parser {
 	id: string = "Quote";
 	canChildrenRepeat: boolean = true;
 	possibleChildren: ParserType[] = [ParserType.from(P_Block)];
+	joinChars = "\n\n";
 
 	private parsingState: ParsingState = ParsingState.start;
 
@@ -42,6 +43,6 @@ export class P_Quote extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<blockquote>${super.toHtmlString()}</blockquote>`;
+		return `<blockquote>\n${super.toHtmlString()}\n</blockquote>`;
 	}
 }

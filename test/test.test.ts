@@ -21,13 +21,13 @@ describe("Markdown to HTML", () => {
 		})
 
 		it("2 simple paragraphs", () => {
-			testMarkdown("Hello world\n\nparagraph 2", `<p>Hello world</p><p>paragraph 2</p>`)
+			testMarkdown("Hello world\n\nparagraph 2", `<p>Hello world</p>\n\n<p>paragraph 2</p>`)
 		})
 
 		it("paragraph cleanup", () => {
-			testMarkdown("  \n\t\nHello world \n\nparagraph 2 \n\n \t", `<p>Hello world</p><p>paragraph 2</p>`)
+			testMarkdown("  \n\t\nHello world \n\nparagraph 2 \n\n \t", `<p>Hello world</p>\n\n<p>paragraph 2</p>`)
 		});
-	})
+	});
 
 	describe("Inline Code", () => {
 		it("just inline code", () => {
@@ -130,37 +130,37 @@ describe("Markdown to HTML", () => {
 	describe("Multiline Code", () => {
 		describe("Leading Spaces", () => {
 			it("Single line", () => {
-				testMarkdown("    code", `<pre><code>code</code></pre>`)
+				testMarkdown("    code", `<pre><code>\ncode\n</code></pre>`)
 			});
 
 			it("Multi line", () => {
-				testMarkdown("    code1\n    code2\n    \n    code3\n    code4\n", `<pre><code>code1\ncode2\n\ncode3\ncode4</code></pre>`)
+				testMarkdown("    code1\n    code2\n    \n    code3\n    code4\n", `<pre><code>\ncode1\ncode2\n\ncode3\ncode4\n</code></pre>`)
 			});
 
 			it("No formatting in code", () => {
-				testMarkdown("    code *i* >!sp!<  \n        ^sup", `<pre><code>code *i* &gt;!sp!&lt;  \n    ^sup</code></pre>`)
+				testMarkdown("    code *i* >!sp!<  \n        ^sup", `<pre><code>\ncode *i* &gt;!sp!&lt;  \n    ^sup\n</code></pre>`)
 			});
 
 			it("Multiple blocks", () => {
-				testMarkdown("    b1 l1\n        b1 l2\n\n    b2 l1\n        b2 l2", `<pre><code>b1 l1\n    b1 l2</code></pre><pre><code>b2 l1\n    b2 l2</code></pre>`)
+				testMarkdown("    b1 l1\n        b1 l2\n\n    b2 l1\n        b2 l2", `<pre><code>\nb1 l1\n    b1 l2\n</code></pre>\n\n<pre><code>\nb2 l1\n    b2 l2\n</code></pre>`)
 			});
 		});
 
 		describe("Fenced", () => {
 			it("Single Line", () => {
-				testMarkdown("```\ncode\n```", `<code>code</code>`)
+				testMarkdown("```\ncode\n```", `<pre><code>\ncode\n</code></pre>`)
 			});
 
 			it("Multi Line", () => {
-				testMarkdown("```\ncode l1 \n\nl2\n```", `<code>code l1 \n\nl2</code>`)
+				testMarkdown("```\ncode l1 \n\nl2\n```", `<pre><code>\ncode l1 \n\nl2\n</code></pre>`)
 			});
 
 			it("Multiple Blocks", () => {
-				testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<code>block 1</code><code>block 2</code>`)
+				testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<pre><code>\nblock 1\n</code></pre>\n\n<pre><code>\nblock 2\n</code></pre>`)
 			});
 
 			it("Nested backticks", () => {
-				testMarkdown("````\n```\nnested\n```\n````", `<code>\`\`\`\nnested\n\`\`\`</code>`)
+				testMarkdown("````\n```\nnested\n```\n````", `<pre><code>\n\`\`\`\nnested\n\`\`\`\n</code></pre>`)
 			});
 		});
 	});
@@ -175,28 +175,28 @@ describe("Markdown to HTML", () => {
 
 	describe("Quote", () => {
 		it("Simple Quote", () => {
-			testMarkdown("> quote", `<blockquote><p>quote</p></blockquote>`)
+			testMarkdown("> quote", `<blockquote>\n<p>quote</p>\n</blockquote>`)
 		});
 
 		it("Multiline Quote", () => {
-			testMarkdown("> quote  \n> l2", `<blockquote><p>quote<br>\nl2</p></blockquote>`)
+			testMarkdown("> quote  \n> l2", `<blockquote>\n<p>quote<br>\nl2</p>\n</blockquote>`)
 		});
 
 		it("Multi-paragraph Quote", () => {
-			testMarkdown("> quote\n> \n> b2", `<blockquote><p>quote</p><p>b2</p></blockquote>`)
+			testMarkdown("> quote\n> \n> b2", `<blockquote>\n<p>quote</p>\n\n<p>b2</p>\n</blockquote>`)
 		});
 
 		it("Nested Quotes", () => {
-			testMarkdown("> > l2", `<blockquote><blockquote><p>l2</p></blockquote></blockquote>`)
+			testMarkdown("> > l2", `<blockquote>\n<blockquote>\n<p>l2</p>\n</blockquote>\n</blockquote>`)
 		});
 
 		it("Nested Multiline Quotes", () => {
-			testMarkdown("> > l1  \n> > l2", `<blockquote><blockquote><p>l1<br>\nl2</p></blockquote></blockquote>`)
+			testMarkdown("> > l1  \n> > l2", `<blockquote>\n<blockquote>\n<p>l1<br>\nl2</p>\n</blockquote>\n</blockquote>`)
 		});
 
 		it("Styled Quotes", () => {
 			testMarkdown("\n> *i* `` code` `` > __b__\n> \n>     code \n> \n> ---\n",
-				`<blockquote><p><em>i</em> <code>code\`</code> &gt; <strong>b</strong></p><pre><code>code </code></pre><hr></blockquote>`)
+				`<blockquote>\n<p><em>i</em> <code>code\`</code> &gt; <strong>b</strong></p>\n\n\<pre><code>\ncode \n</code></pre>\n\n<hr>\n</blockquote>`)
 		});
 
 		it("Escaped Quotes", () => {
@@ -230,29 +230,29 @@ describe("Markdown to HTML", () => {
 	describe("Lists", () => {
 		describe("Unordered", () => {
 			it("simple", () => {
-				testMarkdown("- list", `<ul><li>list</li></ul>`)
+				testMarkdown("- list", `<ul>\n<li>list</li>\n</ul>`)
 			});
 
 			it("multi-entry", () => {
 				testMarkdown("" +
 					"- l1\n" +
 					"- l2",
-					`<ul><li>l1</li><li>l2</li></ul>`)
+					`<ul>\n<li>l1</li>\n<li>l2</li>\n</ul>`)
 			});
 
 			it("multi-line", () => {
 				testMarkdown("" +
 					"- l1\n" +
 					"  l2",
-					`<ul><li>l1 l2</li></ul>`)
+					`<ul>\n<li>l1 l2</li>\n</ul>`)
 				testMarkdown("" +
 					"- l1  \n" +
 					"  l2",
-					`<ul><li>l1<br>\nl2</li></ul>`)
+					`<ul>\n<li>l1<br>\nl2</li>\n</ul>`)
 			});
 
 			it("styled", () => {
-				testMarkdown("- *i* ^sup", `<ul><li><em>i</em> <sup>sup</sup></li></ul>`)
+				testMarkdown("- *i* ^sup", `<ul>\n<li><em>i</em> <sup>sup</sup></li>\n</ul>`)
 			});
 
 			it("escaped", () => {
@@ -269,18 +269,18 @@ describe("Markdown to HTML", () => {
 					"  - n 2.2\n" +
 					"    - 2.2.1\n" +
 					"    - 2.2.2 *i*",
-					"<ul>" +
-						"<li>number 1<ul>" +
-							"<li>n 1.1</li>" +
-							"<li>n 1.2</li>" +
-						"</ul></li>" +
-						"<li>number 2<ul>" +
-							"<li>n 2.1</li>" +
-							"<li>n 2.2<ul>" +
-								"<li>2.2.1</li>" +
-								"<li>2.2.2 <em>i</em></li>" +
-							"</ul></li>" +
-						"</ul></li>" +
+					"<ul>\n" +
+						"<li>number 1\n\n<ul>\n" +
+							"<li>n 1.1</li>\n" +
+							"<li>n 1.2</li>\n" +
+						"</ul></li>\n" +
+						"<li>number 2\n\n<ul>\n" +
+							"<li>n 2.1</li>\n" +
+							"<li>n 2.2\n\n<ul>\n" +
+								"<li>2.2.1</li>\n" +
+								"<li>2.2.2 <em>i</em></li>\n" +
+							"</ul></li>\n" +
+						"</ul></li>\n" +
 					"</ul>")
 			});
 
@@ -296,35 +296,35 @@ describe("Markdown to HTML", () => {
 					"      \n" +
 					"      > quote\n" +
 					"- end",
-					`<ul><li>normal entry</li><li>block entry<ul><li><p>p1</p><h1>h1</h1></li><li>normal nested entry<ul><li><p>nested block entry</p><blockquote><p>quote</p></blockquote></li></ul></li></ul></li><li>end</li></ul>`)
+					`<ul>\n<li>normal entry</li>\n<li>block entry\n\n<ul>\n<li><p>p1</p>\n\n<h1>h1</h1></li>\n<li>normal nested entry\n\n<ul>\n<li><p>nested block entry</p>\n\n<blockquote>\n<p>quote</p>\n</blockquote></li>\n</ul></li>\n</ul></li>\n<li>end</li>\n</ul>`)
 			});
 		});
 
 		describe("Ordered", () => {
 			it("simple", () => {
-				testMarkdown("1. list", `<ol><li>list</li></ol>`)
+				testMarkdown("1. list", `<ol>\n<li>list</li>\n</ol>`)
 			});
 
 			it("multi-entry", () => {
 				testMarkdown("" +
 					"1. l1\n" +
 					"2. l2",
-					`<ol><li>l1</li><li>l2</li></ol>`)
+					`<ol>\n<li>l1</li>\n<li>l2</li>\n</ol>`)
 			});
 
 			it("multi-line", () => {
 				testMarkdown("" +
 					"1. l1\n" +
 					"   l2",
-					`<ol><li>l1 l2</li></ol>`)
+					`<ol>\n<li>l1 l2</li>\n</ol>`)
 				testMarkdown("" +
 					"1. l1  \n" +
 					"   l2",
-					`<ol><li>l1<br>\nl2</li></ol>`)
+					`<ol>\n<li>l1<br>\nl2</li>\n</ol>`)
 			});
 
 			it("styled", () => {
-				testMarkdown("1. *i* ^sup", `<ol><li><em>i</em> <sup>sup</sup></li></ol>`)
+				testMarkdown("1. *i* ^sup", `<ol>\n<li><em>i</em> <sup>sup</sup></li>\n</ol>`)
 			});
 
 			it("escaped", () => {
@@ -341,18 +341,18 @@ describe("Markdown to HTML", () => {
 					"   1. n 2.2\n" +
 					"      1. 2.2.1\n" +
 					"      1. 2.2.2 *i*",
-					"<ol>" +
-						"<li>number 1<ol>" +
-							"<li>n 1.1</li>" +
-							"<li>n 1.2</li>" +
-						"</ol></li>" +
-						"<li>number 2<ol>" +
-							"<li>n 2.1</li>" +
-							"<li>n 2.2<ol>" +
-								"<li>2.2.1</li>" +
-								"<li>2.2.2 <em>i</em></li>" +
-							"</ol></li>" +
-						"</ol></li>" +
+					"<ol>\n" +
+						"<li>number 1\n\n<ol>\n" +
+							"<li>n 1.1</li>\n" +
+							"<li>n 1.2</li>\n" +
+						"</ol></li>\n" +
+						"<li>number 2\n\n<ol>\n" +
+							"<li>n 2.1</li>\n" +
+							"<li>n 2.2\n\n<ol>\n" +
+								"<li>2.2.1</li>\n" +
+								"<li>2.2.2 <em>i</em></li>\n" +
+							"</ol></li>\n" +
+						"</ol></li>\n" +
 					"</ol>")
 			});
 
@@ -368,7 +368,7 @@ describe("Markdown to HTML", () => {
 					"         \n" +
 					"         > quote\n" +
 					"3. end",
-					`<ol><li>normal entry</li><li>block entry<ol><li><p>p1</p><h1>h1</h1></li><li>normal nested entry<ol><li><p>nested block entry</p><blockquote><p>quote</p></blockquote></li></ol></li></ol></li><li>end</li></ol>`)
+					`<ol>\n<li>normal entry</li>\n<li>block entry\n\n<ol>\n<li><p>p1</p>\n\n<h1>h1</h1></li>\n<li>normal nested entry\n\n<ol>\n<li><p>nested block entry</p>\n\n<blockquote>\n<p>quote</p>\n</blockquote></li>\n</ol></li>\n</ol></li>\n<li>end</li>\n</ol>`)
 			});
 		});
 
@@ -389,7 +389,7 @@ describe("Markdown to HTML", () => {
 					"    - line 1.1\n" +
 					"      line 2.2" +
 					"3. end",
-					`<ol><li>normal <em>entry</em></li><li>block <sup>entry</sup><ul><li><p>p1</p><h1>h1</h1></li><li>normal nested entry<ol><li><p>nested block entry</p><blockquote><p>quote</p></blockquote></li></ol></li><li>line 1<br>\nline 2<ul><li>line 1.1. line 2.2</li></ul></li></ul></li><li>end</li></ol>`)
+					`<ol>\n<li>normal <em>entry</em></li>\n<li>block <sup>entry</sup>\n\n<ul>\n<li><p>p1</p>\n\n<h1>h1</h1></li>\n<li>normal nested entry\n\n<ol>\n<li><p>nested block entry</p>\n\n<blockquote>\n<p>quote</p>\n</blockquote></li></ol></li>\n<li>line 1<br>\nline 2\n\n<ul>\n<li>line 1.1. line 2.2</li></ul></li></ul></li>\n<li>end</li>\n</ol>`)
 			});
 		});
 	});
@@ -440,6 +440,10 @@ describe("Markdown to HTML", () => {
 				testMarkdown("bla://x.com", `<p>bla://x.com</p>`)
 			});
 		});
+
+		it("no xss", () => {
+			testMarkdown(`[text "><script></script><!--](/xss)`, `<p><a href="/xss">text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--</a></p>`)
+		});
 	});
 
 	describe("Tables", () => {
@@ -447,7 +451,7 @@ describe("Markdown to HTML", () => {
 			testMarkdown("" +
 				"| Header 1 | Header 2 | Header 3 |\n" +
 				"|----------|----------|----------|\n",
-				`<table><thead><tr><th>Header 1</th><th>Header 2</th><th>Header 3</th></tr></thead><tbody></tbody></table>`)
+				`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n</tbody></table>`)
 		});
 
 		it("Simple Table", () => {
@@ -456,7 +460,7 @@ describe("Markdown to HTML", () => {
 				"|----------|----------|----------|\n" +
 				"| row 1    | r/all    | *2*      |\n" +
 				"| - row 2  | `val 2`  | ^3       |",
-				`<table><thead><tr><th>Header 1</th><th>Header 2</th><th>Header 3</th></tr></thead><tbody><tr><td>row 1</td><td><a href="/r/all">r/all</a></td><td><em>2</em></td></tr><tr><td>- row 2</td><td><code>val 2</code></td><td><sup>3</sup></td></tr></tbody></table>`)
+				`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 		});
 
 		it("Aligned table", () => {
@@ -465,7 +469,7 @@ describe("Markdown to HTML", () => {
 				"|:---------|---------:|:--------:|\n" +
 				"| row 1    | r/all    | *2*      |\n" +
 				"| - row 2  | `val 2`  | ^3       |",
-				`<table><thead><tr><th align="left">Header 1</th><th align="right">Header 2</th><th align="center">Header 3</th></tr></thead><tbody><tr><td align="left">row 1</td><td align="right"><a href="/r/all">r/all</a></td><td align="center"><em>2</em></td></tr><tr><td align="left">- row 2</td><td align="right"><code>val 2</code></td><td align="center"><sup>3</sup></td></tr></tbody></table>`)
+				`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 			
 		});
 		it("Simple Table (minimal)", () => {
@@ -474,7 +478,7 @@ describe("Markdown to HTML", () => {
 				"|-|-|-|\n" +
 				"| row 1 | r/all | *2* |\n" +
 				"| - row 2 | `val 2` | ^3 |", 
-				`<table><thead><tr><th>Header 1</th><th>Header 2</th><th>Header 3</th></tr></thead><tbody><tr><td>row 1</td><td><a href="/r/all">r/all</a></td><td><em>2</em></td></tr><tr><td>- row 2</td><td><code>val 2</code></td><td><sup>3</sup></td></tr></tbody></table>`)
+				`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 		});
 
 		it("Aligned table (minimal)", () => {
@@ -483,7 +487,7 @@ describe("Markdown to HTML", () => {
 				"|:-|-:|:-:|\n" +
 				"| row 1 | r/all | *2* |\n" +
 				"| - row 2 | `val 2` | ^3 |",
-				`<table><thead><tr><th align="left">Header 1</th><th align="right">Header 2</th><th align="center">Header 3</th></tr></thead><tbody><tr><td align="left">row 1</td><td align="right"><a href="/r/all">r/all</a></td><td align="center"><em>2</em></td></tr><tr><td align="left">- row 2</td><td align="right"><code>val 2</code></td><td align="center"><sup>3</sup></td></tr></tbody></table>`)
+				`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 		});
 	});
 });

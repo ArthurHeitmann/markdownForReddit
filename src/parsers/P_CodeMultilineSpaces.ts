@@ -45,6 +45,6 @@ export class P_CodeMultilineSpaces extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<pre><code>${super.toHtmlString()}</code></pre>`;
+		return `<pre><code>\n${super.toHtmlString()}\n</code></pre>`;
 	}
 }
