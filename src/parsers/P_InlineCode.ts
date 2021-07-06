@@ -5,6 +5,7 @@ enum InlineCodeParsingState {
 	tickStart, wsStart, content, wsEnd, tickEnd, completed, error
 }
 
+/** An inline code segment starts and ends with one ore more "`". Spaces at the beginning and end are ignored. */
 export class P_InlineCode extends P_Parser {
 	id: string = "InlineCode";
 	canChildrenRepeat: boolean = false;

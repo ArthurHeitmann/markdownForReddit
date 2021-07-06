@@ -1,6 +1,7 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
 import {P_Text} from "./P_Text.js";
 
+/** A code block, where each line start with 4 spaces */
 export class P_CodeMultilineSpaces extends P_Parser {
 	id: string = "CodeMultilineSpaces";
 	canChildrenRepeat: boolean = false;

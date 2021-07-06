@@ -9,6 +9,7 @@ import {P_Table} from "./P_Table.js";
 import {ParsingCursor} from "../parsingCursor.js";
 import {P_List} from "./P_List.js";
 
+/** A block is one Element like a table, list or a text paragraph */
 export class P_Block extends P_Parser {
 	id: string = "block";
 	possibleChildren: ParserType[] = [
@@ -31,7 +32,7 @@ export class P_Block extends P_Parser {
 		for (const excludedId of excludedTypeIds) {
 			const possibleChildrenIndex = this.possibleChildren.findIndex(parser => {
 				const newParser = parser.make(null);
-				return newParser.id === "list";
+				return newParser.id === excludedId;
 			});
 			this.possibleChildren.splice(possibleChildrenIndex, 1);
 		}

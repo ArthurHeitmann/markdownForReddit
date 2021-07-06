@@ -12,6 +12,8 @@ const redditRegex = /^\/?(r|u|user)\/[^\/]+/;
 const schemaRegex = /^(http:\/\/|https:\/\/|ftp:\/\/|mailto:|git:\/\/|steam:\/\/|irc:\/\/|news:\/\/|mumble:\/\/|ssh:\/\/|ircs:\/\/|ts3server:\/\/).+/;
 const manualRegex = /^\[.+]\((http:\/\/|https:\/\/|ftp:\/\/|mailto:|git:\/\/|steam:\/\/|irc:\/\/|news:\/\/|mumble:\/\/|ssh:\/\/|ircs:\/\/|ts3server:\/\/|\/|#)([^)]|\\\)|\\\()+\)/s;
 
+/** A link can be either reddit internal (r/all), or a URI text (https://reddit.com), or manually defined (displayed
+ *  text + link + (optionally) title attribute) */
 export class P_Link extends P_Parser {
 	id: string = "link";
 	canChildrenRepeat: boolean = false;

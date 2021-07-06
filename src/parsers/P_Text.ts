@@ -2,6 +2,13 @@ import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
 import {ParsingCursor} from "../parsingCursor.js";
 import {escapeHtml} from "../utils.js";
 
+/**
+ * Just text.
+ * All text will be HTML escaped.
+ * By default double spaces at line end will be replaced with <br>.
+ * Line breaks without double spaces will be replaced with one space.
+ * For code blocks these features can be deactivated.
+ */
 export class P_Text extends P_Parser {
 	id: string = "text";
 	canChildrenRepeat: boolean = false;

@@ -1,6 +1,7 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
 import {BasicTextOptions, P_BasicText} from "./P_BasicText.js";
 
+/** A text paragraph */
 export class P_Paragraph extends P_Parser {
 	id: string = "paragraph";
 	canChildrenRepeat: boolean = false;

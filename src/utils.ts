@@ -1,4 +1,5 @@
 
+/** escapes all html characters, except for "&" because they are used literally in markdown */
 export function escapeHtml(string: string): string {
 	// copied from escape-html npm package
 
@@ -48,6 +49,7 @@ export function escapeHtml(string: string): string {
 		: html;
 }
 
+/** escapes all regex special characters */
 export function escapeRegex(strToEscape: string): string {
 	return strToEscape.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }

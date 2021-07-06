@@ -1,6 +1,10 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
 import {P_Block} from "./P_Block.js";
 
+/**
+ * A quote (blockquote) starts on each line with "> ".
+ * Inside a quote can be a list of blocks.
+ */
 export class P_Quote extends P_Parser {
 	id: string = "Quote";
 	canChildrenRepeat: boolean = true;

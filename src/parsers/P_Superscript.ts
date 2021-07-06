@@ -1,6 +1,7 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
 
+/** Superscripted inline text. Follows pattern of "^word" or "^(multiple word)". Containing text can be styled. */
 export class P_Superscript extends P_Parser {
 	id: string = "superscript";
 	canChildrenRepeat: boolean = true;

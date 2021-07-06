@@ -24,6 +24,11 @@ interface ListTypeDefinition {
 	tagName: string;
 }
 
+/**
+ * A list can either be unordered (- , - , ...) or ordered (1. ,2. , ...).
+ * A list entry can either have some basic text or be a list of blocks.
+ * After that optionally a nested list (ul or ol) can be added.
+ */
 export class P_List extends P_Parser {
 	id: string = "list";
 	canChildrenRepeat: boolean = true;
@@ -51,7 +56,7 @@ export class P_List extends P_Parser {
 	private currentEntry: Entry = null;
 	private parsedIndents = 0;
 	private makeNewBlock: boolean = false;
-	// following vars for sublist
+	// following vars are for sublist state
 	private isNewLine: boolean = true;
 	private currentLineBackup: string = "";
 	private nextLineBackup: string = "";
@@ -105,6 +110,7 @@ export class P_List extends P_Parser {
 			}
 		}
 
+		// the following code somehow works. How? idk
 		else if (this.parsingState === ListParsingState.content) {
 			if (this.trimNextLine) {
 				this.cursor.currentLine = this.cursor.currentLine.slice(this.listType.indentation);

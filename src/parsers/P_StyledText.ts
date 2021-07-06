@@ -11,6 +11,7 @@ interface StyleType {
 	noMidWordEnd?: boolean;
 }
 
+/** Some styled inline text (like: bold, italics, ...) */
 export class P_StyledText extends P_Parser {
 	id: string = "styledText";
 	canChildrenRepeat: boolean = true;

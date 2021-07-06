@@ -1,5 +1,5 @@
 {
-  "name": "markdownForReddit",
+  "name": "markdown-for-reddit",
   "version": "1.0.0",
   "description": "",
   "main": "src/main.js",
@@ -13,6 +13,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^16.0.0",
     "typescript": "^3.9.7"
   },
   "devDependencies": {

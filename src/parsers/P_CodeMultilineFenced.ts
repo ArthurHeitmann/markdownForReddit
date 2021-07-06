@@ -1,6 +1,10 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
 import {P_Text} from "./P_Text.js";
 
+/**
+ * Code that is surrounded by 3 or more "`" on new lines. Incompatible with old reddit, therefore the new reddit
+ *  version is used here.
+ */
 export class P_CodeMultilineFenced extends P_Parser {
 	id: string = "CodeMultilineSpaces";
 	canChildrenRepeat: boolean = false;

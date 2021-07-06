@@ -1,15 +1,17 @@
-export const cases: string[][] = [
-	['', ''],
-	["Hello world\n\nparagraph 2", `<p>Hello world</p><p>paragraph 2</p>`],
-	["Some `code`", `<p>Some <code>code</code></p>`],
-	["Normal^superscript", `<p>Normal<sup>superscript</sup></p>`],
-	["Escape\\^superscript", `<p>Escape^superscript</p>`],
-	["~~normal strikethrough~~", `<p><del>normal strikethrough</del></p>`],
-	["\\~~escaped strikethrough~~", `<p>~~escaped strikethrough~~</p>`],
-	['<tests>', `<p>&lt;test&gt;</p>`],
-	['words_with_underscores', `<p>words_with_underscores</p>`],
-	['words*with*asterisks', `<p>words<em>with</em>asterisks</p>`],
-	['~tests', `<p>~test</p>`],
+// keeping this file for future lookups
+
+// export const cases: string[][] = [
+// 	['', ''],
+// 	["Hello world\n\nparagraph 2", `<p>Hello world</p><p>paragraph 2</p>`],
+// 	["Some `code`", `<p>Some <code>code</code></p>`],
+// 	["Normal^superscript", `<p>Normal<sup>superscript</sup></p>`],
+// 	["Escape\\^superscript", `<p>Escape^superscript</p>`],
+// 	["~~normal strikethrough~~", `<p><del>normal strikethrough</del></p>`],
+// 	["\\~~escaped strikethrough~~", `<p>~~escaped strikethrough~~</p>`],
+// 	['<tests>', `<p>&lt;test&gt;</p>`],
+// 	['words_with_underscores', `<p>words_with_underscores</p>`],
+// 	['words*with*asterisks', `<p>words<em>with</em>asterisks</p>`],
+// 	['~tests', `<p>~test</p>`],
 	// ["# Heading 1", `<h1>Heading 1</h1>`],
 	// ["## Heading 2", `<h2>Heading 2</h2>`],
 	// from https://github.com/gamefreak/snuownd/blob/master/test.js
@@ -129,4 +131,4 @@ export const cases: string[][] = [
 	// '&;': '<p>&amp;;</p>\n',
 	// '&#;': '<p>&amp;#;</p>\n',
 	// '&#x;': '<p>&amp;#x;</p>\n',
-];
+// ];

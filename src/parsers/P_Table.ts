@@ -15,6 +15,18 @@ enum DividerParsingState {
 	pipe, firstChar, spacer, lastChar, completed
 }
 
+/**
+ * A markdown table. Consists of a header row, a divider row, and a number of content rows.
+ *
+ * Example:
+ * | Header 1 | H 2     |
+ * |----------|:-------:|
+ * | row 1 c1 | cell 2  |
+ * | row 2    | c2      |
+ * | formatting doesn't matter | that much |
+ *
+ * (here the H 2 column will be center formatted)
+ */
 export class P_Table extends P_Parser {
 	id: string = "table";
 	canChildrenRepeat: boolean = false;
@@ -170,7 +182,7 @@ export class P_Table extends P_Parser {
 		for (const row of this.cellValues) {
 			out += `<tr>\n`;
 			for (let i = 0; i < this.columns; ++i) {
-				out += `<td${this.columnAlignment[i] ? ` align="${this.columnAlignment[i]}"` : ""}>${row[i].toHtmlString()}</td>\n`;
+				out += `<td${this.columnAlignment[i] ? ` align="${this.columnAlignment[i]}"` : ""}>${row[i]?.toHtmlString() ?? ""}</td>\n`;
 			}
 			out += `</tr>\n`;
 		}

@@ -1,6 +1,7 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
 
+/** A h1, h2, ..., h6 heading. Starts with 1 - 6 "#". */
 export class P_Heading extends P_Parser {
 	id: string = "Heading";
 	canChildrenRepeat: boolean = false;

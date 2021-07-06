@@ -10,6 +10,7 @@ export interface BasicTextOptions {
 	allowLinks?: boolean
 }
 
+/** Simple text that can be styled or optionally have links */
 export class P_BasicText extends P_Parser {
 	id: string = "basicText"
 	canChildrenRepeat: boolean = true;
@@ -20,8 +21,8 @@ export class P_BasicText extends P_Parser {
 		ParserType.from(P_Text)
 	];
 
-	constructor(state, options: BasicTextOptions = {}) {
-		super(state);
+	constructor(cursor, options: BasicTextOptions = {}) {
+		super(cursor);
 
 		this.possibleChildren[0] = ParserType.from(P_StyledText, options.excludedStyleTypes || []);
 		if (options.allowLinks)
