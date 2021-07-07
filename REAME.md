@@ -1,5 +1,7 @@
 # Markdown for reddit
 
+[![Mocha Tests](https://github.com/ArthurHeitmann/markdownForReddit/actions/workflows/mochaTests.yml/badge.svg)](https://github.com/ArthurHeitmann/markdownForReddit/actions/workflows/mochaTests.yml)
+
 A tool for converting reddit flavoured markdown text into HTML.
 
 ## Usage
