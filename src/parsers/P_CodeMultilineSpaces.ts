@@ -5,13 +5,13 @@ import {P_Text} from "./P_Text.js";
 export class P_CodeMultilineSpaces extends P_Parser {
 	id: string = "CodeMultilineSpaces";
 	canChildrenRepeat: boolean = false;
-	possibleChildren: ParserType[] = [ParserType.from(P_Text, false)];
+	possibleChildren: ParserType[] = [ParserType.from(P_Text, false, true)];
 
 	private parsingState: ParsingState = ParsingState.start;
 	private parsedStartSpaces = 0;
 
 	canStart(): boolean {
-		return this.cursor.column === 0 && this.cursor.currentLine.startsWith("    ");
+		return this.cursor.column === 0 && /^( {4}|\t)/.test(this.cursor.currentLine);
 	}
 
 	canConsumeChar(): boolean {
@@ -26,7 +26,7 @@ export class P_CodeMultilineSpaces extends P_Parser {
 			}
 			else {
 				if (this.cursor.currentChar === "\n") {
-					if (!this.cursor.nextLine.startsWith("    "))
+					if (!/^( {4}|\t)/.test(this.cursor.nextLine))
 						return AfterParseResult.ended;
 					super.parseChar();
 				}
@@ -38,7 +38,7 @@ export class P_CodeMultilineSpaces extends P_Parser {
 
 		if (this.parsingState === ParsingState.start) {
 			this.parsedStartSpaces++;
-			if (this.parsedStartSpaces === 4)
+			if (this.parsedStartSpaces === 4 || this.cursor.currentChar === "\t")
 				this.parsingState = ParsingState.content;
 			return AfterParseResult.consumed;
 		}
@@ -46,6 +46,6 @@ export class P_CodeMultilineSpaces extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<pre><code>\n${super.toHtmlString()}\n</code></pre>`;
+		return `<pre><code>${super.toHtmlString()}\n</code></pre>`;
 	}
 }

@@ -1,11 +1,11 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
-import {P_BasicText} from "./P_BasicText.js";
+import {BasicTextOptions, P_BasicText} from "./P_BasicText.js";
 
 /** A h1, h2, ..., h6 heading. Starts with 1 - 6 "#". */
 export class P_Heading extends P_Parser {
 	id: string = "Heading";
 	canChildrenRepeat: boolean = false;
-	possibleChildren: ParserType[] = [ParserType.from(P_BasicText)];
+	possibleChildren: ParserType[] = [ParserType.from(P_BasicText, <BasicTextOptions> { allowLinks: true })];
 
 	private headingLevel: number = 0;
 	private parsingState: ParsingState = ParsingState.start;

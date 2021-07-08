@@ -1,6 +1,6 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
 
-/** A horizontal line <hr>. Made from 3 or more "-" or "_" or "*" at the beginning of a line */
+/** A horizontal line <hr/>. Made from 3 or more "-" or "_" or "*" at the beginning of a line */
 export class P_HorizontalLine extends P_Parser {
 	id: string = "HorizontalLine";
 	canChildrenRepeat: boolean = false;
@@ -15,6 +15,6 @@ export class P_HorizontalLine extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<hr>`;
+		return `<hr/>`;
 	}
 }

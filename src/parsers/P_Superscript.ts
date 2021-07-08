@@ -44,12 +44,10 @@ export class P_Superscript extends P_Parser {
 			}
 			return super.parseChar();
 		}
-
-
 	}
 
 	toHtmlString(): string {
-		if (this.parseState === ParsingState.completed)
+		if (this.parseState === ParsingState.completed || !this.usesParentheses)
 			return `<sup>${super.toHtmlString()}</sup>`;
 		else
 			return `^${this.usesParentheses ? "(" : ""}${super.toHtmlString()}`;

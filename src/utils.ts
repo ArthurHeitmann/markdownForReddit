@@ -1,10 +1,10 @@
 
 /** escapes all html characters, except for "&" because they are used literally in markdown */
 export function escapeHtml(string: string): string {
-	// copied from escape-html npm package
+	// copied & modified from escape-html npm package
 
 	const str = '' + string;
-	const match = /["'&<>]/.exec(str);
+	const match = /["'<>]|&(?!([a-z\d]+|#\d+|#x[a-f\d]+);)/.exec(str);
 
 	if (!match) {
 		return str;
@@ -20,9 +20,9 @@ export function escapeHtml(string: string): string {
 			case 34: // "
 				escape = '&quot;';
 				break;
-			// case 38: // &
-			// 	escape = '&amp;';
-			// 	break;
+			case 38: // &
+				escape = '&amp;';
+				break;
 			case 39: // '
 				escape = '&#39;';
 				break;

@@ -25,7 +25,7 @@ describe("Markdown to HTML", () => {
 		})
 
 		it("paragraph cleanup", () => {
-			testMarkdown("  \n\t\nHello world \n\nparagraph 2 \n\n \t", `<p>Hello world</p>\n\n<p>paragraph 2</p>`)
+			testMarkdown("  \n\t\nHello world \n\nparagraph 2 \n\n \t", `<p>Hello world </p>\n\n<p>paragraph 2 </p>`)
 		});
 	});
 
@@ -35,7 +35,7 @@ describe("Markdown to HTML", () => {
 		});
 
 		it("repeating inline code", () => {
-			testMarkdown("`code 1` `code 2` `code 3` ", `<p><code>code 1</code> <code>code 2</code> <code>code 3</code></p>`)
+			testMarkdown("`code 1` `code 2` `code 3`", `<p><code>code 1</code> <code>code 2</code> <code>code 3</code></p>`)
 		});
 
 		it("Multiple backtick code", () => {
@@ -130,45 +130,49 @@ describe("Markdown to HTML", () => {
 	describe("Multiline Code", () => {
 		describe("Leading Spaces", () => {
 			it("Single line", () => {
-				testMarkdown("    code", `<pre><code>\ncode\n</code></pre>`)
+				testMarkdown("    code", `<pre><code>code\n</code></pre>`)
 			});
 
 			it("Multi line", () => {
-				testMarkdown("    code1\n    code2\n    \n    code3\n    code4\n", `<pre><code>\ncode1\ncode2\n\ncode3\ncode4\n</code></pre>`)
+				testMarkdown("    code1\n    code2\n    \n    code3\n    code4\n", `<pre><code>code1\ncode2\n\ncode3\ncode4\n</code></pre>`)
+			});
+
+			it("Multi line with mixed tabs", () => {
+				testMarkdown("    code1\n\t\tcode2\n    \n    code3\n    code4\n", `<pre><code>code1\n    code2\n\ncode3\ncode4\n</code></pre>`)
 			});
 
 			it("No formatting in code", () => {
-				testMarkdown("    code *i* >!sp!<  \n        ^sup", `<pre><code>\ncode *i* &gt;!sp!&lt;  \n    ^sup\n</code></pre>`)
+				testMarkdown("    code *i* >!sp!<  \n        ^sup", `<pre><code>code *i* &gt;!sp!&lt;  \n    ^sup\n</code></pre>`)
 			});
 
 			it("Multiple blocks", () => {
-				testMarkdown("    b1 l1\n        b1 l2\n\n    b2 l1\n        b2 l2", `<pre><code>\nb1 l1\n    b1 l2\n</code></pre>\n\n<pre><code>\nb2 l1\n    b2 l2\n</code></pre>`)
+				testMarkdown("    b1 l1\n        b1 l2\n\n    b2 l1\n        b2 l2", `<pre><code>b1 l1\n    b1 l2\n</code></pre>\n\n<pre><code>b2 l1\n    b2 l2\n</code></pre>`)
 			});
 		});
 
 		describe("Fenced", () => {
 			it("Single Line", () => {
-				testMarkdown("```\ncode\n```", `<pre><code>\ncode\n</code></pre>`)
+				testMarkdown("```\ncode\n```", `<pre><code>code\n</code></pre>`)
 			});
 
 			it("Multi Line", () => {
-				testMarkdown("```\ncode l1 \n\nl2\n```", `<pre><code>\ncode l1 \n\nl2\n</code></pre>`)
+				testMarkdown("```\ncode l1 \n\nl2\n```", `<pre><code>code l1 \n\nl2\n</code></pre>`)
 			});
 
 			it("Multiple Blocks", () => {
-				testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<pre><code>\nblock 1\n</code></pre>\n\n<pre><code>\nblock 2\n</code></pre>`)
+				testMarkdown("```\nblock 1\n```\n\n```\nblock 2\n```", `<pre><code>block 1\n</code></pre>\n\n<pre><code>block 2\n</code></pre>`)
 			});
 
 			it("Nested backticks", () => {
-				testMarkdown("````\n```\nnested\n```\n````", `<pre><code>\n\`\`\`\nnested\n\`\`\`\n</code></pre>`)
+				testMarkdown("````\n```\nnested\n```\n````", `<pre><code>\`\`\`\nnested\n\`\`\`\n</code></pre>`)
 			});
 		});
 	});
 
 	it("Horizontal Line", () => {
 		for (const ch of ["-", "*", "_"]) {
-			testMarkdown(ch.repeat(3), `<hr>`)
-			testMarkdown(ch.repeat(5), `<hr>`)
+			testMarkdown(ch.repeat(3), `<hr/>`)
+			testMarkdown(ch.repeat(5), `<hr/>`)
 			testMarkdown("\\" + ch.repeat(3), `<p>${ch.repeat(3)}</p>`)
 		}
 	});
@@ -179,7 +183,7 @@ describe("Markdown to HTML", () => {
 		});
 
 		it("Multiline Quote", () => {
-			testMarkdown("> quote  \n> l2", `<blockquote>\n<p>quote<br>\nl2</p>\n</blockquote>`)
+			testMarkdown("> quote  \n> l2", `<blockquote>\n<p>quote<br/>\nl2</p>\n</blockquote>`)
 		});
 
 		it("Multi-paragraph Quote", () => {
@@ -191,12 +195,12 @@ describe("Markdown to HTML", () => {
 		});
 
 		it("Nested Multiline Quotes", () => {
-			testMarkdown("> > l1  \n> > l2", `<blockquote>\n<blockquote>\n<p>l1<br>\nl2</p>\n</blockquote>\n</blockquote>`)
+			testMarkdown("> > l1  \n> > l2", `<blockquote>\n<blockquote>\n<p>l1<br/>\nl2</p>\n</blockquote>\n</blockquote>`)
 		});
 
 		it("Styled Quotes", () => {
 			testMarkdown("\n> *i* `` code` `` > __b__\n> \n>     code \n> \n> ---\n",
-				`<blockquote>\n<p><em>i</em> <code>code\`</code> &gt; <strong>b</strong></p>\n\n\<pre><code>\ncode \n</code></pre>\n\n<hr>\n</blockquote>`)
+				`<blockquote>\n<p><em>i</em> <code>code\`</code> &gt; <strong>b</strong></p>\n\n\<pre><code>code \n</code></pre>\n\n<hr/>\n</blockquote>`)
 		});
 
 		it("Escaped Quotes", () => {
@@ -248,7 +252,7 @@ describe("Markdown to HTML", () => {
 				testMarkdown("" +
 					"- l1  \n" +
 					"  l2",
-					`<ul>\n<li>l1<br>\nl2</li>\n</ul>`)
+					`<ul>\n<li>l1<br/>\nl2</li>\n</ul>`)
 			});
 
 			it("styled", () => {
@@ -320,7 +324,7 @@ describe("Markdown to HTML", () => {
 				testMarkdown("" +
 					"1. l1  \n" +
 					"   l2",
-					`<ol>\n<li>l1<br>\nl2</li>\n</ol>`)
+					`<ol>\n<li>l1<br/>\nl2</li>\n</ol>`)
 			});
 
 			it("styled", () => {
@@ -389,7 +393,7 @@ describe("Markdown to HTML", () => {
 					"    - line 1.1\n" +
 					"      line 2.2" +
 					"3. end",
-					`<ol>\n<li>normal <em>entry</em></li>\n<li>block <sup>entry</sup>\n\n<ul>\n<li><p>p1</p>\n\n<h1>h1</h1></li>\n<li>normal nested entry\n\n<ol>\n<li><p>nested block entry</p>\n\n<blockquote>\n<p>quote</p>\n</blockquote></li></ol></li>\n<li>line 1<br>\nline 2\n\n<ul>\n<li>line 1.1. line 2.2</li></ul></li></ul></li>\n<li>end</li>\n</ol>`)
+					`<ol>\n<li>normal <em>entry</em></li>\n<li>block <sup>entry</sup>\n\n<ul>\n<li><p>p1</p>\n\n<h1>h1</h1></li>\n<li>normal nested entry\n\n<ol>\n<li><p>nested block entry</p>\n\n<blockquote>\n<p>quote</p>\n</blockquote></li></ol></li>\n<li>line 1<br/>\nline 2\n\n<ul>\n<li>line 1.1. line 2.2</li></ul></li></ul></li>\n<li>end</li>\n</ol>`)
 			});
 		});
 	});
@@ -427,7 +431,7 @@ describe("Markdown to HTML", () => {
 		describe("Schema Links", () => {
 			it("schemas", () => {
 				testMarkdown("https://reddit.com", `<p><a href="https://reddit.com">https://reddit.com</a></p>`)
-				testMarkdown("https://reddit.com/r/all/top?t=all&count=10", `<p><a href="https://reddit.com/r/all/top?t=all&count=10">https://reddit.com/r/all/top?t=all&count=10</a></p>`)
+				testMarkdown("https://reddit.com/r/all/top?t=all&count=10", `<p><a href="https://reddit.com/r/all/top?t=all&amp;count=10">https://reddit.com/r/all/top?t=all&amp;count=10</a></p>`)
 			});
 
 			it("different environments", () => {
@@ -474,19 +478,19 @@ describe("Markdown to HTML", () => {
 		});
 		it("Simple Table (minimal)", () => {
 			testMarkdown("" +
-				"| Header 1 | Header 2 | Header 3 |\n" +
+				"|Header 1|Header 2|Header 3|\n" +
 				"|-|-|-|\n" +
-				"| row 1 | r/all | *2* |\n" +
-				"| - row 2 | `val 2` | ^3 |", 
+				"|row 1|r/all|*2*|\n" +
+				"|- row 2|`val 2`|^3|",
 				`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 		});
 
 		it("Aligned table (minimal)", () => {
 			testMarkdown("" +
-				"| Header 1 | Header 2 | Header 3 |\n" +
+				"|Header 1|Header 2|Header 3|\n" +
 				"|:-|-:|:-:|\n" +
-				"| row 1 | r/all | *2* |\n" +
-				"| - row 2 | `val 2` | ^3 |",
+				"|row 1|r/all |*2*|\n" +
+				"|- row 2|`val 2`|^3|",
 				`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 		});
 	});

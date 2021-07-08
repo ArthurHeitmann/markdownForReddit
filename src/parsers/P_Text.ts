@@ -5,7 +5,7 @@ import {escapeHtml} from "../utils.js";
 /**
  * Just text.
  * All text will be HTML escaped.
- * By default double spaces at line end will be replaced with <br>.
+ * By default double spaces at line end will be replaced with <br/>.
  * Line breaks without double spaces will be replaced with one space.
  * For code blocks these features can be deactivated.
  */
@@ -16,11 +16,13 @@ export class P_Text extends P_Parser {
 
 	private static escapableCharsRegex = /\\([`~*_\-\\><\]^\/])/g;
 	private readonly modifyLineBreaks: boolean;
+	private readonly preserveTabs: boolean;
 
-	constructor(cursor: ParsingCursor, modifyLineBreaks = true) {
+	constructor(cursor: ParsingCursor, modifyLineBreaks = true, preserveTabs = false) {
 		super(cursor);
 
 		this.modifyLineBreaks = modifyLineBreaks;
+		this.preserveTabs = preserveTabs;
 	}
 
 	private parsedText = "";
@@ -35,13 +37,23 @@ export class P_Text extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		if (this.modifyLineBreaks)
-			return escapeHtml(this.parsedText
-				.replace(P_Text.escapableCharsRegex, "$1"))
-				.replace(/ {2,}\n/g, "<br>\n")					// replace double space at end of line with <br>
-				.replace(/(?<!<br>)\s*\n(?=.+)/g, " ")			// remove all other line breaks
+		let text = this.parsedText;
+		if (this.preserveTabs) {
+			text = text.replace(/\t/g, "    ")
+		}
+		else {
+			text = text.replace(/\t/g, " ")
+		}
+		if (this.modifyLineBreaks) {
+			text = text.replace(P_Text.escapableCharsRegex, "$1");
+			text = escapeHtml(text)
+			text = text.replace(/ {2,}\n/g, "<br/>\n")				// replace double space at end of line with <br/>
+			text = text.replace(/(?<!<br\/>)\s*\n(?=.+)/g, " ")	// remove all other line breaks
+		}
 		else
-			return escapeHtml(this.parsedText);
+			text = escapeHtml(text)
+
+		return text;
 	}
 
 }

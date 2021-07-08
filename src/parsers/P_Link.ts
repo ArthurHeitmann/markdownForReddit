@@ -31,7 +31,7 @@ export class P_Link extends P_Parser {
 			redditRegex.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\" ||
 			schemaRegex.test(this.cursor.remainingText) ||
 			manualRegex.test(this.cursor.remainingText)
-		) && /^(|\s|\()$/.test(this.cursor.previousChar);
+		) && /^(|\s|\(|\|)$/.test(this.cursor.previousChar);
 	}
 
 	parseChar(): AfterParseResult {
@@ -116,6 +116,6 @@ export class P_Link extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<a href="${encodeURI(this.url)}"${this.title ? ` title="${this.title}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
+		return `<a href="${escapeHtml(encodeURI(this.url))}"${this.title ? ` title="${this.title}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
 	}
 }

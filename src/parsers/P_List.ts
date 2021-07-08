@@ -1,5 +1,5 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
-import {P_BasicText} from "./P_BasicText.js";
+import {BasicTextOptions, P_BasicText} from "./P_BasicText.js";
 import {P_Block} from "./P_Block.js";
 import {P_Paragraph} from "./P_Paragraph.js";
 
@@ -91,7 +91,7 @@ export class P_List extends P_Parser {
 				this.parsingState = ListParsingState.content;
 				this.contentParsingState = ContentParsingState.text;
 				this.entries.push({
-					textOnly: new P_BasicText(this.cursor),
+					textOnly: new P_BasicText(this.cursor, <BasicTextOptions> { allowLinks: true }),
 					blocks: []
 				});
 				this.currentEntry = this.entries[this.entries.length - 1];

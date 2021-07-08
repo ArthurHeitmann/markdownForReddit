@@ -8,7 +8,7 @@ import {P_Text} from "./P_Text.js";
 export class P_CodeMultilineFenced extends P_Parser {
 	id: string = "CodeMultilineSpaces";
 	canChildrenRepeat: boolean = false;
-	possibleChildren: ParserType[] = [ParserType.from(P_Text, false)];
+	possibleChildren: ParserType[] = [ParserType.from(P_Text, false, true)];
 
 	private parsingState: ParsingState = ParsingState.start;
 	private parsedStartTicks = 0;
@@ -50,7 +50,7 @@ export class P_CodeMultilineFenced extends P_Parser {
 
 	toHtmlString(): string {
 		if (this.parsingState === ParsingState.completed)
-			return `<pre><code>\n${super.toHtmlString()}\n</code></pre>`;
+			return `<pre><code>${super.toHtmlString()}\n</code></pre>`;
 		else
 			return `${"`".repeat(this.parsedStartTicks)}${super.toHtmlString()}`;
 	}
