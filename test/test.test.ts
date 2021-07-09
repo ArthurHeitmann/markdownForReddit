@@ -1,7 +1,7 @@
 import {parseMarkdown} from "../src/main.js";
 import {expect} from 'chai';
 
-const debug = true;
+const debug = false;
 
 function testMarkdown(markdown, expectedHtml) {
 	const generatedHtml = parseMarkdown(markdown);
@@ -502,6 +502,16 @@ describe("Markdown to HTML", () => {
 				"|- row 2|`val 2`|^3|\n" +
 				"|  | ||",
 				`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n<tr>\n<td align="left"></td>\n<td align="right"></td>\n<td align="center"></td>\n</tr>\n</tbody></table>`)
+		});
+
+		it("Simple Table with column span", () => {
+			testMarkdown("" +
+				"| Header 1 | Header 2 | Header 3 | H 4 |\n" +
+				"|----------|----------|---------:|-----|\n" +
+				"| 1x1      | 1x2      | 1x3      |\n" +
+				"| 2x1      | 2x2      |\n" +
+				"| 3x1      |",
+				`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th align="right">Header 3</th>\n<th>H 4</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>1x1</td>\n<td>1x2</td>\n<td align="right">1x3</td>\n<td></td>\n</tr>\n<tr>\n<td>2x1</td>\n<td>2x2</td>\n<td colspan="2"  align="right"></td>\n</tr>\n<tr>\n<td>3x1</td>\n<td colspan="3"></td>\n</tr>\n</tbody></table>`)
 		});
 	});
 });

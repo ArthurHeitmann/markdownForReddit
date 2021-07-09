@@ -53,7 +53,7 @@ export class P_Table extends P_Parser {
 
 	parseChar(): AfterParseResult {
 		if (this.parsingState === TableParsingState.header) {
-			this.parseDataRow(
+			return this.parseDataRow(
 				() => this.headerValues.push(new P_BasicText(this.cursor)),
 				() => this.headerValues[this.headerValues.length - 1].parseChar(),
 				() => this.columns++,
@@ -121,7 +121,7 @@ export class P_Table extends P_Parser {
 		}
 
 		else if (this.parsingState === TableParsingState.rows) {
-			this.parseDataRow(
+			return this.parseDataRow(
 				() => this.cellValues[this.currentRow].push(new P_BasicText(this.cursor, <BasicTextOptions> { allowLinks: true })),
 				() => this.cellValues[this.currentRow][this.currentColumn].parseChar(),
 				() => this.currentColumn++,
@@ -151,7 +151,12 @@ export class P_Table extends P_Parser {
 		for (const row of this.cellValues) {
 			out += `<tr>\n`;
 			for (let i = 0; i < this.columns; ++i) {
-				out += `<td${this.columnAlignment[i] ? ` align="${this.columnAlignment[i]}"` : ""}>${row[i]?.toHtmlString() ?? ""}</td>\n`;
+				const colspan = !row[i] && i + 1 !== this.columns ? ` colspan="${this.columns - i}"` : "";
+				const align = this.columnAlignment[i] ? ` align="${this.columnAlignment[i]}"` : "";
+				const phantomSpace = colspan && align ? " " : "";
+				out += `<td${colspan}${phantomSpace}${align}>${row[i]?.toHtmlString() ?? ""}</td>\n`;
+				if (colspan)
+					break;
 			}
 			out += `</tr>\n`;
 		}
@@ -161,7 +166,7 @@ export class P_Table extends P_Parser {
 
 	private parseDataRow(onInitContent: () => void, onParseChar: () => void, onColumnCompleted: () => void, onRowCompleted: () => AfterParseResult): AfterParseResult {
 		if (this.dataRowParsingState === DataRowParsingState.pipe) {
-			if (/^\s*\n/.test(this.cursor.remainingText)) {
+			if (/^\|\s*(\n|$)/.test(this.cursor.remainingText)) {
 				this.dataRowParsingState = DataRowParsingState.completed;
 			}
 			else {
