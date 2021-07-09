@@ -1220,11 +1220,6 @@ function parseMarkdown(markdown) {
   }
   return rootParser.toHtmlString();
 }
-console.log(parseMarkdown(`
-
-&#x200B;
-
-`));
 export {
   parseMarkdown
 };
