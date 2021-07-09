@@ -20,7 +20,7 @@ document.body.innerHTML = html;
 
 ### Bundling
 
-Generates the `markdown-for-reddit.js` file and puts it into the .
+Generates the `markdown-for-reddit.js` file and puts it into the `./bundled` folder.
 
 ```shell script
 npm install
