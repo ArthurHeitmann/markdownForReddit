@@ -192,6 +192,7 @@ export class P_Table extends P_Parser {
 				this.dataRowParsingState = DataRowParsingState.content;
 		}
 		else if (this.dataRowParsingState === DataRowParsingState.content) {
+			this.cursor.isNewNode = true;
 			onParseChar();
 			if (this.cursor.remainingText[1] === "|" && this.cursor.currentChar !== "\\") {
 				this.dataRowParsingState = DataRowParsingState.pipe;

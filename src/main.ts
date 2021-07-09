@@ -9,7 +9,7 @@ import {ParsingCursor} from "./parsingCursor.js";
  * @return Rendered HTML string
  */
 export function parseMarkdown(markdown: string): string {
-	// remove whitespace at start and end
+	// remove empty lines at start and end
 	markdown = markdown.replace(/^(\s*\n)*|(\s*\n)*$|(?<=\n)\s*$/g, "");
 
 	const cursor = new ParsingCursor(markdown);

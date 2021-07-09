@@ -424,7 +424,6 @@ describe("Markdown to HTML", () => {
 				testMarkdown("r/all.nope", `<p><a href="/r/all">r/all</a>.nope</p>`)
 				testMarkdown("r/", `<p>r/</p>`)
 				testMarkdown("x/sub", `<p>x/sub</p>`)
-				testMarkdown("\\/r/all", `<p>/r/all</p>`)
 			});
 		});
 
@@ -443,6 +442,10 @@ describe("Markdown to HTML", () => {
 				testMarkdown("texthttps://reddit.com", `<p>texthttps://reddit.com</p>`)
 				testMarkdown("bla://x.com", `<p>bla://x.com</p>`)
 			});
+		});
+
+		describe("Menual Links", () => {
+
 		});
 
 		it("no xss", () => {

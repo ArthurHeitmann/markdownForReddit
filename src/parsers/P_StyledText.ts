@@ -11,6 +11,10 @@ interface StyleType {
 	noMidWordEnd?: boolean;
 }
 
+export interface StyledTextOptions extends BasicTextOptions {
+	excludedCharSeq?: string[]
+}
+
 /** Some styled inline text (like: bold, italics, ...) */
 export class P_StyledText extends P_Parser {
 	id: string = "styledText";
@@ -27,14 +31,16 @@ export class P_StyledText extends P_Parser {
 
 	];
 	private excludedCharSeq: string[];
+	private allowLinks: boolean;
 	private parsingState: ParsingState = ParsingState.notStarted;
 	private styleType: StyleType = null;
 	private parsedStartChars = "";
 	private parsedEndChars = "";
 
-	constructor(cursor: ParsingCursor, excludedCharSeq: string[] = []) {
+	constructor(cursor: ParsingCursor, options: StyledTextOptions = {}) {
 		super(cursor);
-		this.excludedCharSeq = excludedCharSeq;
+		this.excludedCharSeq = options.excludedCharSeq || [];
+		this.allowLinks = options.allowLinks
 	}
 
 	canStart(): boolean {
@@ -68,7 +74,11 @@ export class P_StyledText extends P_Parser {
 				}
 			}
 			this.possibleChildren[0] = ParserType.from(P_BasicText,
-				<BasicTextOptions> { excludedStyleTypes: this.excludedCharSeq.concat(this.styleType.charSequence) });
+				<BasicTextOptions> {
+					excludedStyleTypes: this.excludedCharSeq.concat(this.styleType.charSequence),
+					allowLinks: this.allowLinks
+				}
+			);
 			this.parsingState = ParsingState.start;
 		}
 
@@ -91,6 +101,7 @@ export class P_StyledText extends P_Parser {
 				this.parsingState = ParsingState.end;
 			}
 			else {
+				this.cursor.isNewNode = true;
 				return super.parseChar();
 			}
 		}

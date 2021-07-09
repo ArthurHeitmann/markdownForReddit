@@ -20,9 +20,9 @@ type ParserConstrSignature = new (cursor: ParsingCursor, ...other: any) => P_Par
 /** Wrapper for storing a P_Parser constructor with optional arguments */
 export class ParserType {
 	/** Class to be instanciated */
-	private constr: ParserConstrSignature;
+	constr: ParserConstrSignature;
 	/** Optional arguments passed to the constructor */
-	private otherParams: any[];
+	otherParams: any[];
 
 	/** Instantiates the P_Parser sub class */
 	make(cursor: ParsingCursor): P_Parser {

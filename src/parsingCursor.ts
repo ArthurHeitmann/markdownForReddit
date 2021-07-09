@@ -26,6 +26,8 @@ export class ParsingCursor {
 	previousText: string = "";
 	/** if there is no remaining text */
 	isLastChar: boolean;
+	/** if true P_Link can ignore the previous char */
+	isNewNode: boolean = false;
 
 	constructor(markdown: string) {
 		this.allText = markdown;
@@ -45,6 +47,7 @@ export class ParsingCursor {
 		this.previousText = this.allText.slice(0, this.charIndex);
 		this.remainingText = this.allText.slice(this.charIndex);
 		this.isLastChar = this.charIndex + 1 === this.allText.length;
+		this.isNewNode = false;
 		// reached end of current line
 		if (this.column === this.currentLine.length) {
 			this.row++;

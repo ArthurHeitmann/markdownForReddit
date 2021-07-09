@@ -31,7 +31,7 @@ export class P_Link extends P_Parser {
 			redditRegex.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\" ||
 			schemaRegex.test(this.cursor.remainingText) ||
 			manualRegex.test(this.cursor.remainingText)
-		) && /^(|\s|\(|\|)$/.test(this.cursor.previousChar);
+		) && (/^(|\W)$/.test(this.cursor.previousChar) || this.cursor.isNewNode);
 	}
 
 	parseChar(): AfterParseResult {

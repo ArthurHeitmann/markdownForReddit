@@ -4,7 +4,7 @@ export function escapeHtml(string: string): string {
 	// copied & modified from escape-html npm package
 
 	const str = '' + string;
-	const match = /["'<>]|&(?!([a-z\d]+|#\d+|#x[a-f\d]+);)/.exec(str);
+	const match = /["'<>]|&(?!([a-zA-Z\d]+|#\d+|#x[a-fA-F\d]+);)/.exec(str);
 
 	if (!match) {
 		return str;

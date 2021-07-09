@@ -1,5 +1,6 @@
 import {AfterParseResult, P_Parser, ParserType, ParsingState} from "./P_Parser.js";
-import {P_BasicText} from "./P_BasicText.js";
+import {BasicTextChildOptions, BasicTextOptions, P_BasicText} from "./P_BasicText.js";
+import {ParsingCursor} from "../parsingCursor.js";
 
 /** Superscripted inline text. Follows pattern of "^word" or "^(multiple word)". Containing text can be styled. */
 export class P_Superscript extends P_Parser {
@@ -10,6 +11,13 @@ export class P_Superscript extends P_Parser {
 	private parsedStartChars = "";
 	private usesParentheses: boolean;
 	private parseState: ParsingState = ParsingState.notStarted;
+
+	constructor(cursor: ParsingCursor, options: BasicTextChildOptions = {}) {
+		super(cursor);
+
+		if (options.allowLinks)
+			(this.possibleChildren[0] as BasicTextOptions).allowLinks = true;
+	}
 
 	canStart(): boolean {
 		return /^\^(\S+|(\(.*\)))/s.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\";
