@@ -11,7 +11,7 @@ export class P_Heading extends P_Parser {
 	private parsingState: ParsingState = ParsingState.start;
 
 	canStart(): boolean {
-		return /^#{1,6} .+(\n|$)/.test(this.cursor.currentLine);
+		return /^#{1,6}.*(\n|$)/.test(this.cursor.currentLine);
 	}
 
 	parseChar(): AfterParseResult {
@@ -22,8 +22,10 @@ export class P_Heading extends P_Parser {
 			}
 			if (this.cursor.currentChar === " ") {
 				this.parsingState = ParsingState.content;
+				this.headingLevel = Math.min(6, this.headingLevel);
 				return AfterParseResult.consumed;
 			}
+			this.headingLevel = Math.min(6, this.headingLevel);
 			this.parsingState = ParsingState.content;
 		}
 

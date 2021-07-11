@@ -14,7 +14,7 @@ export class P_Text extends P_Parser {
 	canChildrenRepeat: boolean = false;
 	possibleChildren: ParserType[] = [];
 
-	private static escapableCharsRegex = /\\([`~*_\-\\><\]\[^\/])/g;
+	private static escapableCharsRegex = /\\([`~*_\-\\><\]\[^\/#])/g;
 	private readonly modifyLineBreaks: boolean;
 	private readonly preserveTabs: boolean;
 

@@ -240,7 +240,7 @@ var P_Text = class extends P_Parser {
     return text;
   }
 };
-P_Text.escapableCharsRegex = /\\([`~*_\-\\><\]\[^\/])/g;
+P_Text.escapableCharsRegex = /\\([`~*_\-\\><\]\[^\/#])/g;
 
 // src/parsers/P_InlineCode.js
 var InlineCodeParsingState;
@@ -707,7 +707,7 @@ var P_Heading = class extends P_Parser {
     this.parsingState = ParsingState.start;
   }
   canStart() {
-    return /^#{1,6} .+(\n|$)/.test(this.cursor.currentLine);
+    return /^#{1,6}.*(\n|$)/.test(this.cursor.currentLine);
   }
   parseChar() {
     if (this.parsingState === ParsingState.start) {
@@ -717,8 +717,10 @@ var P_Heading = class extends P_Parser {
       }
       if (this.cursor.currentChar === " ") {
         this.parsingState = ParsingState.content;
+        this.headingLevel = Math.min(6, this.headingLevel);
         return AfterParseResult.consumed;
       }
+      this.headingLevel = Math.min(6, this.headingLevel);
       this.parsingState = ParsingState.content;
     }
     if (this.parsingState === ParsingState.content) {

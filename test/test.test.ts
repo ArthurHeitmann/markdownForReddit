@@ -212,8 +212,17 @@ describe("Markdown to HTML", () => {
 		for (let i = 0; i < 6; ++i) {
 			it(`Simple h1`, () => {
 				testMarkdown(`${"#".repeat(i + 1)} Heading`, `<h${i+1}>Heading</h${i+1}>`);
+				testMarkdown(`${"#".repeat(i + 1)}Heading`, `<h${i+1}>Heading</h${i+1}>`);
 			});
 		}
+
+		it("Escaped heading", () => {
+			testMarkdown("\\#", `<p>#</p>`)
+		});
+
+		it("Max h6", () => {
+			testMarkdown("########## h", `<h6>h</h6>`)
+		});
 
 		it("Styled Heading", () => {
 			testMarkdown("## *i* ^(sup 2) # testing `code`", `<h2><em>i</em> <sup>sup 2</sup> # testing <code>code</code></h2>`)
