@@ -47,7 +47,7 @@ export class P_Table extends P_Parser {
 		const dividerPipes = P_Table.countRowPipes(this.cursor.nextLine);
 		return headerPipes >= 2 && dividerPipes >= 2 && (
 			/^\|(.*?(?<!\\)\|+) *\n/.test(this.cursor.currentLine) &&
-			/^\|(:?-+?:?(?<!\\)\|+)+ *(\n|$)/.test(this.cursor.nextLine)
+			/^\|([:\- ]*(?<!\\)\|+)+ *(\n|$)/.test(this.cursor.nextLine)
 		);
 	}
 

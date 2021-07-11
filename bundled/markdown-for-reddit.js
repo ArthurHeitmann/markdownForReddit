@@ -240,7 +240,7 @@ var P_Text = class extends P_Parser {
     return text;
   }
 };
-P_Text.escapableCharsRegex = /\\([`~*_\-\\><\]\[^\/#])/g;
+P_Text.escapableCharsRegex = /\\([`~*_\-\\><\]\[^\/#|)])/g;
 
 // src/parsers/P_InlineCode.js
 var InlineCodeParsingState;
@@ -781,7 +781,7 @@ var P_Table = class extends P_Parser {
   canStart() {
     const headerPipes = P_Table.countRowPipes(this.cursor.currentLine);
     const dividerPipes = P_Table.countRowPipes(this.cursor.nextLine);
-    return headerPipes >= 2 && dividerPipes >= 2 && (/^\|(.*?(?<!\\)\|+) *\n/.test(this.cursor.currentLine) && /^\|(:?-+?:?(?<!\\)\|+)+ *(\n|$)/.test(this.cursor.nextLine));
+    return headerPipes >= 2 && dividerPipes >= 2 && (/^\|(.*?(?<!\\)\|+) *\n/.test(this.cursor.currentLine) && /^\|([:\- ]*(?<!\\)\|+)+ *(\n|$)/.test(this.cursor.nextLine));
   }
   parseChar() {
     if (this.parsingState === TableParsingState.header) {
@@ -1244,6 +1244,10 @@ function parseMarkdown(markdown) {
   }
   return rootParser.toHtmlString();
 }
+console.log(parseMarkdown(`
+
+
+`));
 export {
   parseMarkdown
 };
