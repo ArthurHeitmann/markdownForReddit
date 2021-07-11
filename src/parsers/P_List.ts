@@ -4,7 +4,7 @@ import {P_Block} from "./P_Block.js";
 import {P_Paragraph} from "./P_Paragraph.js";
 
 enum ListParsingState {
-	start, whitespace, content
+	start, whitespace, content, blankLine
 }
 
 enum ContentParsingState {
@@ -119,8 +119,12 @@ export class P_List extends P_Parser {
 				this.cursor.column -= this.listType.indentation;
 				this.trimNextLine = false;
 			}
-			if (this.cursor.currentChar === "\n" && !(this.isNextLineStillIndented() || this.isNextLineNewEntry()))
-				return AfterParseResult.ended;
+			if (this.cursor.currentChar === "\n" && !(this.isNextLineStillIndented() || this.isNextLineNewEntry())) {
+				if (this.isNextLineBlankLine())
+					this.parsingState = ListParsingState.blankLine;
+				else
+					return AfterParseResult.ended;
+			}
 
 			else if (this.contentParsingState === ContentParsingState.text) {
 				this.currentEntry.textOnly.parseChar();
@@ -165,6 +169,8 @@ export class P_List extends P_Parser {
 					const newBlock = this.possibleChildren[0].make(this.cursor) as P_Block;
 					if (newBlock.canStart())
 						this.currentEntry.blocks.push(newBlock);
+					else if (this.isNextLineBlankLine())
+						this.parsingState = ListParsingState.blankLine;
 					else
 						return AfterParseResult.ended;
 				}
@@ -181,16 +187,30 @@ export class P_List extends P_Parser {
 				}
 				if (this.cursor.currentChar === "\n") {
 					this.isNewLine = true;
-					if (this.isNextLineStillIndented()) {
+					if (this.isNextLineStillIndented())
 						this.parsingState = ListParsingState.whitespace;
-					}
-					else if (this.isNextLineNewEntry()) {
+					else if (this.isNextLineNewEntry())
 						this.parsingState = ListParsingState.start;
-						this.contentParsingState = ContentParsingState.text;
-					}
 				}
 				this.currentEntry.sublist.parseChar();
 				return AfterParseResult.consumed;
+			}
+		}
+
+		else if (this.parsingState === ListParsingState.blankLine) {
+			if (this.cursor.currentChar === "\n") {
+				this.currentLineBackup = this.cursor.currentLine;
+				this.nextLineBackup = this.cursor.nextLine;
+				this.isNewLine = true;
+				if (this.isNextLineNewEntry())
+					this.parsingState = ListParsingState.start;
+				else if (this.isNextLineNewEntry())
+					this.parsingState = ListParsingState.start;
+				else if (this.isNextLineStillIndented() && this.currentEntry.sublist)
+					this.parsingState = ListParsingState.whitespace;
+				else if (this.isNextLineBlankLine()) {}
+				else
+					return AfterParseResult.ended;
 			}
 		}
 
@@ -236,5 +256,9 @@ export class P_List extends P_Parser {
 
 	private isNextLineList(): boolean {
 		return this.isNextLineNewEntry() || this.isNextLineStillIndented() && this.currentEntry?.sublist?.isNextLineList();
+	}
+
+	private isNextLineBlankLine(): boolean {
+		return /^\s*\n/.test(this.cursor.nextLine);
 	}
 }

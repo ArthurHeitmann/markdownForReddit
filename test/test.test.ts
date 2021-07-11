@@ -288,6 +288,33 @@ describe("Markdown to HTML", () => {
 					"</ul>")
 			});
 
+			it("nested with blank lines", () => {
+				testMarkdown("" +
+					"- number 1\n" +
+					"  - n 1.1\n" +
+					"  - n 1.2\n\n\n" +
+					"- number 2\n" +
+					"  - n 2.1\n" +
+					"  - n 2.2\n" +
+					"    - 2.2.1\n" +
+					"    - 2.2.2 *i*\n\n" +
+					"- number 3",
+					"<ul>\n" +
+						"<li>number 1\n\n<ul>\n" +
+							"<li>n 1.1</li>\n" +
+							"<li>n 1.2</li>\n" +
+						"</ul></li>\n" +
+						"<li>number 2\n\n<ul>\n" +
+							"<li>n 2.1</li>\n" +
+							"<li>n 2.2\n\n<ul>\n" +
+								"<li>2.2.1</li>\n" +
+								"<li>2.2.2 <em>i</em></li>\n" +
+							"</ul></li>\n" +
+						"</ul></li>\n" +
+						"<li>number 3</li>\n" +
+					"</ul>")
+			});
+
 			it("blocks", () => {
 				testMarkdown("" +
 					"- normal entry\n" +
@@ -357,6 +384,33 @@ describe("Markdown to HTML", () => {
 								"<li>2.2.2 <em>i</em></li>\n" +
 							"</ol></li>\n" +
 						"</ol></li>\n" +
+					"</ol>")
+			});
+
+			it("nested with blank lines", () => {
+				testMarkdown("" +
+					"1. number 1\n" +
+					"   1. n 1.1\n" +
+					"   1. n 1.2\n\n\n\n\n\n" +
+					"2. number 2\n" +
+					"   1. n 2.1\n" +
+					"   1. n 2.2\n" +
+					"      1. 2.2.1\n" +
+					"      1. 2.2.2 *i*\n\n" +
+					"3. number 3",
+					"<ol>\n" +
+						"<li>number 1\n\n<ol>\n" +
+							"<li>n 1.1</li>\n" +
+							"<li>n 1.2</li>\n" +
+						"</ol></li>\n" +
+						"<li>number 2\n\n<ol>\n" +
+							"<li>n 2.1</li>\n" +
+							"<li>n 2.2\n\n<ol>\n" +
+								"<li>2.2.1</li>\n" +
+								"<li>2.2.2 <em>i</em></li>\n" +
+							"</ol></li>\n" +
+						"</ol></li>\n" +
+						"<li>number 3</li>\n" +
 					"</ol>")
 			});
 

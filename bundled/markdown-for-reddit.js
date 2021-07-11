@@ -930,6 +930,7 @@ var ListParsingState;
   ListParsingState2[ListParsingState2["start"] = 0] = "start";
   ListParsingState2[ListParsingState2["whitespace"] = 1] = "whitespace";
   ListParsingState2[ListParsingState2["content"] = 2] = "content";
+  ListParsingState2[ListParsingState2["blankLine"] = 3] = "blankLine";
 })(ListParsingState || (ListParsingState = {}));
 var ContentParsingState;
 (function(ContentParsingState2) {
@@ -1006,9 +1007,12 @@ var P_List = class extends P_Parser {
         this.cursor.column -= this.listType.indentation;
         this.trimNextLine = false;
       }
-      if (this.cursor.currentChar === "\n" && !(this.isNextLineStillIndented() || this.isNextLineNewEntry()))
-        return AfterParseResult.ended;
-      else if (this.contentParsingState === ContentParsingState.text) {
+      if (this.cursor.currentChar === "\n" && !(this.isNextLineStillIndented() || this.isNextLineNewEntry())) {
+        if (this.isNextLineBlankLine())
+          this.parsingState = ListParsingState.blankLine;
+        else
+          return AfterParseResult.ended;
+      } else if (this.contentParsingState === ContentParsingState.text) {
         this.currentEntry.textOnly.parseChar();
         if (this.cursor.currentChar === "\n") {
           if (this.isNextLineNewEntry())
@@ -1046,6 +1050,8 @@ var P_List = class extends P_Parser {
           const newBlock = this.possibleChildren[0].make(this.cursor);
           if (newBlock.canStart())
             this.currentEntry.blocks.push(newBlock);
+          else if (this.isNextLineBlankLine())
+            this.parsingState = ListParsingState.blankLine;
           else
             return AfterParseResult.ended;
         }
@@ -1061,15 +1067,28 @@ var P_List = class extends P_Parser {
         }
         if (this.cursor.currentChar === "\n") {
           this.isNewLine = true;
-          if (this.isNextLineStillIndented()) {
+          if (this.isNextLineStillIndented())
             this.parsingState = ListParsingState.whitespace;
-          } else if (this.isNextLineNewEntry()) {
+          else if (this.isNextLineNewEntry())
             this.parsingState = ListParsingState.start;
-            this.contentParsingState = ContentParsingState.text;
-          }
         }
         this.currentEntry.sublist.parseChar();
         return AfterParseResult.consumed;
+      }
+    } else if (this.parsingState === ListParsingState.blankLine) {
+      if (this.cursor.currentChar === "\n") {
+        this.currentLineBackup = this.cursor.currentLine;
+        this.nextLineBackup = this.cursor.nextLine;
+        this.isNewLine = true;
+        if (this.isNextLineNewEntry())
+          this.parsingState = ListParsingState.start;
+        else if (this.isNextLineNewEntry())
+          this.parsingState = ListParsingState.start;
+        else if (this.isNextLineStillIndented() && this.currentEntry.sublist)
+          this.parsingState = ListParsingState.whitespace;
+        else if (this.isNextLineBlankLine()) {
+        } else
+          return AfterParseResult.ended;
       }
     }
     return AfterParseResult.consumed;
@@ -1110,6 +1129,9 @@ var P_List = class extends P_Parser {
   }
   isNextLineList() {
     return this.isNextLineNewEntry() || this.isNextLineStillIndented() && this.currentEntry?.sublist?.isNextLineList();
+  }
+  isNextLineBlankLine() {
+    return /^\s*\n/.test(this.cursor.nextLine);
   }
 };
 P_List.listTypes = [
