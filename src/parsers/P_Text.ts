@@ -48,7 +48,7 @@ export class P_Text extends P_Parser {
 			text = text.replace(P_Text.escapableCharsRegex, "$1");
 			text = escapeHtml(text)
 			text = text.replace(/ {2,}\n/g, "<br/>\n")				// replace double space at end of line with <br/>
-			text = text.replace(/(?<!<br\/>)\s*\n(?=.+)/g, " ")	// remove all other line breaks
+			text = text.replace(/((?!<br\/>)(?:.{5}|^.{0,4}))\s*\n(?=.+)/g, "$1 ")	// remove all other line breaks
 		}
 		else
 			text = escapeHtml(text)

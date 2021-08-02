@@ -10,7 +10,9 @@ import {ParsingCursor} from "./parsingCursor.js";
  */
 export function parseMarkdown(markdown: string): string {
 	// remove empty lines at start and end
-	markdown = markdown.replace(/^(\s*\n)*|(\s*\n)*$|(?<=\n)\s*$/g, "");
+	markdown = markdown
+		.replace(/^(\s*\n)*|(\s*\n)*$/g, "")
+		.replace(/\n\s*$/g, "\n");
 
 	const cursor = new ParsingCursor(markdown);
 	const rootParser = new P_Root(cursor);

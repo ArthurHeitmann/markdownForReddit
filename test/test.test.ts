@@ -25,7 +25,7 @@ describe("Markdown to HTML", () => {
 		})
 
 		it("paragraph cleanup", () => {
-			testMarkdown("  \n\t\nHello world \n\nparagraph 2 \n\n \t", `<p>Hello world </p>\n\n<p>paragraph 2 </p>`)
+			testMarkdown("  \n\t\nHello world \n\nparagraph 2 \n\n \t", `<p>Hello world</p>\n\n<p>paragraph 2</p>`)
 		});
 	});
 
@@ -529,8 +529,8 @@ describe("Markdown to HTML", () => {
 				"| Header 1 | Header 2 | Header 3 |\n" +
 				"|----------|----------|----------|\n" +
 				"| row 1    | r/all    | *2*      |\n" +
-				"| - row 2  | `val 2`  | ^3       |",
-				`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup></td>\n</tr>\n</tbody></table>`)
+				"| - row 2  | `val 2`  | ^3 \\|   |",
+				`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup> |</td>\n</tr>\n</tbody></table>`)
 		});
 
 		it("Aligned table", () => {

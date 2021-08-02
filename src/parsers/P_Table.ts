@@ -46,8 +46,8 @@ export class P_Table extends P_Parser {
 		const headerPipes = P_Table.countRowPipes(this.cursor.currentLine);
 		const dividerPipes = P_Table.countRowPipes(this.cursor.nextLine);
 		return headerPipes >= 2 && dividerPipes >= 2 && (
-			/^\|(.*?(?<!\\)\|+) *\n/.test(this.cursor.currentLine) &&
-			/^\|([:\- ]*(?<!\\)\|+)+ *(\n|$)/.test(this.cursor.nextLine)
+			/^\|((.*[^\\]|)\|+) *\n/.test(this.cursor.currentLine) &&
+			/^\|([:\- ]*\|+)+ *(\n|$)/.test(this.cursor.nextLine)
 		);
 	}
 
@@ -198,7 +198,7 @@ export class P_Table extends P_Parser {
 				this.dataRowParsingState = DataRowParsingState.pipe;
 				onColumnCompleted();
 			}
-			else if (/^. *(?<!\\)\|/.test(this.cursor.remainingText))
+			else if (/^(. +|[^\\])\|/.test(this.cursor.remainingText))
 				this.dataRowParsingState = DataRowParsingState.end;
 		}
 		else if (this.dataRowParsingState === DataRowParsingState.end) {
@@ -219,6 +219,6 @@ export class P_Table extends P_Parser {
 	}
 
 	private static countRowPipes(row: string): number {
-		return row?.match(/(?<!\\)\|/g)?.length ?? 0;
+		return row?.match(/(^|[^\\])\|/g)?.length ?? 0;
 	}
 }
