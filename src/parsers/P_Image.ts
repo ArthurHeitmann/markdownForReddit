@@ -91,10 +91,12 @@ export class P_Image extends P_Parser {
 		let url = "";
 		let dimensions: {width: number, height: number} | undefined;
 		let useLink = false;
+		let mediaID: string | undefined;
 		const imageDisplayPolicy = this.cursor.redditData.mediaDisplayPolicy ?? MediaDisplayPolicy.imageOrGif;
 		if (this.cursor.redditData.media_metadata && this.url in this.cursor.redditData.media_metadata) {
 			const media = this.cursor.redditData.media_metadata[this.url];
 			url = media.s.u ?? media.s.gif ?? "";
+			mediaID = this.url;
 			if (media.s.x && media.s.y) {
 				dimensions = {
 					width: media.s.x,
@@ -142,6 +144,8 @@ export class P_Image extends P_Parser {
 				attributes.push(["width", dimensions.width.toString()]);
 				attributes.push(["height", dimensions.height.toString()]);
 			}
+			if (mediaID)
+				attributes.push(["data-media-id", mediaID]);
 		}
 		let html = `<${tag}`;
 		for (const [key, value] of attributes) {

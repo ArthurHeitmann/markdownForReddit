@@ -573,7 +573,7 @@ describe("Markdown to HTML", () => {
 			it("With additional media metadata", () => {
 				testMarkdown(
 					"![img](emote|t5_2th52|27189)",
-					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44"></p>`,
+					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44" data-media-id="emote|t5_2th52|27189"></p>`,
 					{
 						media_metadata: {
 							"emote|t5_2th52|27189": {
@@ -593,7 +593,7 @@ describe("Markdown to HTML", () => {
 				)
 				testMarkdown(
 					"![img](emote|t5_2th52|27189)",
-					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44"></p>`,
+					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44" data-media-id="emote|t5_2th52|27189"></p>`,
 					{
 						media_metadata: {
 							"emote|t5_2th52|27189": {
@@ -635,7 +635,7 @@ describe("Markdown to HTML", () => {
 				)
 				testMarkdown(
 					"![img](eobz0qkh7x4c1 \"Image caption: tap the community topic and ranking to explore similar communities.\")",
-					`<p><img src="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities." alt="img" width="1740" height="1704"></p>`,
+					`<p><img src="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities." alt="img" width="1740" height="1704" data-media-id="eobz0qkh7x4c1"></p>`,
 					{
 						media_metadata: {
 							"eobz0qkh7x4c1": {
