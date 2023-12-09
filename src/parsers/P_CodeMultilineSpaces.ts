@@ -43,6 +43,7 @@ export class P_CodeMultilineSpaces extends P_Parser {
 			return AfterParseResult.consumed;
 		}
 
+		return AfterParseResult.consumed;
 	}
 
 	toHtmlString(): string {

@@ -33,14 +33,14 @@ export class P_StyledText extends P_Parser {
 	private excludedCharSeq: string[];
 	private allowLinks: boolean;
 	private parsingState: ParsingState = ParsingState.notStarted;
-	private styleType: StyleType = null;
+	private styleType: StyleType|null = null;
 	private parsedStartChars = "";
 	private parsedEndChars = "";
 
 	constructor(cursor: ParsingCursor, options: StyledTextOptions = {}) {
 		super(cursor);
 		this.excludedCharSeq = options.excludedCharSeq || [];
-		this.allowLinks = options.allowLinks
+		this.allowLinks = Boolean(options.allowLinks)
 	}
 
 	canStart(): boolean {
@@ -75,7 +75,7 @@ export class P_StyledText extends P_Parser {
 			}
 			this.possibleChildren[0] = ParserType.from(P_BasicText,
 				<BasicTextOptions> {
-					excludedStyleTypes: this.excludedCharSeq.concat(this.styleType.charSequence),
+					excludedStyleTypes: this.excludedCharSeq.concat(this.styleType!.charSequence),
 					allowLinks: this.allowLinks
 				}
 			);
@@ -84,7 +84,7 @@ export class P_StyledText extends P_Parser {
 
 		if (this.parsingState === ParsingState.start) {
 			this.parsedStartChars += this.cursor.currentChar;
-			if (this.parsedStartChars === this.styleType.charSequence)
+			if (this.parsedStartChars === this.styleType!.charSequence)
 				this.parsingState = ParsingState.content;
 			return AfterParseResult.consumed;
 		}
@@ -94,7 +94,7 @@ export class P_StyledText extends P_Parser {
 			if (
 				this.cursor.remainingText.startsWith(this.getCharSequenceEnd())
 				&&
-				!(this.styleType.noMidWordEnd && /^\S/.test(afterEscapeText))
+				!(this.styleType!.noMidWordEnd && /^\S/.test(afterEscapeText))
 				&&
 				this.parsingChild && !this.parsingChild.canConsumeChar()
 			) {
@@ -114,6 +114,8 @@ export class P_StyledText extends P_Parser {
 			}
 			return AfterParseResult.consumed;
 		}
+
+		return AfterParseResult.consumed;
 	}
 
 	canConsumeChar(): boolean {
@@ -123,12 +125,12 @@ export class P_StyledText extends P_Parser {
 
 	toHtmlString(): string {
 		if (this.parsingState === ParsingState.completed)
-			return `<${this.styleType.tagName}${this.styleType.tagOther ?? ""}>${super.toHtmlString()}</${this.styleType.tagName}>`;
+			return `<${this.styleType!.tagName}${this.styleType?.tagOther ?? ""}>${super.toHtmlString()}</${this.styleType!.tagName}>`;
 		else
 			return `${escapeHtml(this.parsedStartChars)}${super.toHtmlString()}${escapeHtml(this.parsedEndChars)}`
 	}
 
 	private getCharSequenceEnd(): string {
-		return this.styleType.charSequenceEnd ?? this.styleType.charSequence;
+		return this.styleType?.charSequenceEnd ?? this.styleType!.charSequence;
 	}
 }

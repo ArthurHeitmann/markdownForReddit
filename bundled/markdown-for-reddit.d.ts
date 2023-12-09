@@ -7,7 +7,7 @@
 export declare function parseMarkdown(markdown: string, additionalRedditData?: AdditionalRedditData): string;
 
 export interface AdditionalRedditData {
-	media_metadata: RedditMediaData;
+	media_metadata?: RedditMediaData;
 }
 
 export interface RedditMediaData {

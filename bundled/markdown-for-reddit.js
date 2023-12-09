@@ -164,7 +164,7 @@ var P_StyledText = class _P_StyledText extends P_Parser {
   constructor(cursor, options = {}) {
     super(cursor);
     this.excludedCharSeq = options.excludedCharSeq || [];
-    this.allowLinks = options.allowLinks;
+    this.allowLinks = Boolean(options.allowLinks);
   }
   canStart() {
     for (const styleType of _P_StyledText.styleTypes) {
@@ -212,6 +212,7 @@ var P_StyledText = class _P_StyledText extends P_Parser {
       }
       return AfterParseResult.consumed;
     }
+    return AfterParseResult.consumed;
   }
   canConsumeChar() {
     const remainingEndChars = this.getCharSequenceEnd().slice(this.parsedEndChars.length);
@@ -219,12 +220,12 @@ var P_StyledText = class _P_StyledText extends P_Parser {
   }
   toHtmlString() {
     if (this.parsingState === ParsingState.completed)
-      return `<${this.styleType.tagName}${this.styleType.tagOther ?? ""}>${super.toHtmlString()}</${this.styleType.tagName}>`;
+      return `<${this.styleType.tagName}${this.styleType?.tagOther ?? ""}>${super.toHtmlString()}</${this.styleType.tagName}>`;
     else
       return `${escapeHtml(this.parsedStartChars)}${super.toHtmlString()}${escapeHtml(this.parsedEndChars)}`;
   }
   getCharSequenceEnd() {
-    return this.styleType.charSequenceEnd ?? this.styleType.charSequence;
+    return this.styleType?.charSequenceEnd ?? this.styleType.charSequence;
   }
 };
 
@@ -402,6 +403,7 @@ var P_Superscript = class extends P_Parser {
       }
       return super.parseChar();
     }
+    return AfterParseResult.consumed;
   }
   toHtmlString() {
     if (this.parseState === ParsingState.completed || !this.usesParentheses)
@@ -506,6 +508,7 @@ var P_Link = class extends P_Parser {
       }
       return AfterParseResult.consumed;
     }
+    return AfterParseResult.consumed;
   }
   toHtmlString() {
     return `<a href="${escapeAttr(encodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
@@ -598,11 +601,12 @@ var P_Image = class extends P_Parser {
     return AfterParseResult.consumed;
   }
   toHtmlString() {
-    let url;
+    let url = "";
     if (this.cursor.redditData.media_metadata && this.url in this.cursor.redditData.media_metadata) {
       const media = this.cursor.redditData.media_metadata[this.url];
-      url = media.s.u;
-    } else
+      url = media.s.u ?? "";
+    }
+    if (!url)
       url = this.url;
     console.log(this.titleSurrounding);
     console.log(this.title);
@@ -687,6 +691,7 @@ var P_CodeMultilineSpaces = class extends P_Parser {
         this.parsingState = ParsingState.content;
       return AfterParseResult.consumed;
     }
+    return AfterParseResult.consumed;
   }
   toHtmlString() {
     return `<pre><code>${super.toHtmlString()}
@@ -730,6 +735,7 @@ var P_CodeMultilineFenced = class extends P_Parser {
       }
       return AfterParseResult.consumed;
     }
+    return AfterParseResult.consumed;
   }
   toHtmlString() {
     if (this.parsingState === ParsingState.completed)
@@ -792,6 +798,7 @@ var P_Quote = class extends P_Parser {
       super.parseChar();
       return AfterParseResult.consumed;
     }
+    return AfterParseResult.consumed;
   }
   toHtmlString() {
     return `<blockquote>
@@ -834,6 +841,7 @@ var P_Heading = class extends P_Parser {
       super.parseChar();
       return AfterParseResult.consumed;
     }
+    return AfterParseResult.consumed;
   }
   toHtmlString() {
     return `<h${this.headingLevel}>${super.toHtmlString()}</h${this.headingLevel}>`;
@@ -1234,7 +1242,7 @@ var P_List = class _P_List extends P_Parser {
       if (listType.initialStartRegex.test(line))
         return true;
     }
-    return this.currentEntry.sublist?.isNextLineList();
+    return Boolean(this.currentEntry.sublist?.isNextLineList());
   }
   isNextLineStillIndented() {
     return this.nextLineBackup ? this.nextLineBackup.startsWith(" ".repeat(this.listType.indentation)) : false;

@@ -52,6 +52,8 @@ export class P_Superscript extends P_Parser {
 			}
 			return super.parseChar();
 		}
+
+		return AfterParseResult.consumed;
 	}
 
 	toHtmlString(): string {

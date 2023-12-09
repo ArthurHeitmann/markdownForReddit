@@ -5,6 +5,7 @@
     "target": "esnext",
     "moduleResolution": "node",
     "sourceMap": true,
+    "strictNullChecks": true,
     "lib": [
       "ESNext",
     ],

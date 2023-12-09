@@ -39,6 +39,8 @@ export class P_Heading extends P_Parser {
 			super.parseChar();
 			return AfterParseResult.consumed;
 		}
+
+		return AfterParseResult.consumed;
 	}
 
 	toHtmlString(): string {

@@ -44,6 +44,8 @@ export class P_Quote extends P_Parser {
 			super.parseChar();
 			return AfterParseResult.consumed
 		}
+		
+		return AfterParseResult.consumed;
 	}
 
 	toHtmlString(): string {

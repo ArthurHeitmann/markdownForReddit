@@ -15,7 +15,7 @@ export enum ParsingState {
 }
 
 /** Similar to "typeof P_Parser" */
-type ParserConstrSignature = new (cursor: ParsingCursor, ...other: any) => P_Parser;
+type ParserConstrSignature = new (cursor: ParsingCursor|null, ...other: any) => P_Parser;
 
 /** Wrapper for storing a P_Parser constructor with optional arguments */
 export class ParserType {
@@ -25,7 +25,7 @@ export class ParserType {
 	otherParams: any[];
 
 	/** Instantiates the P_Parser sub class */
-	make(cursor: ParsingCursor): P_Parser {
+	make(cursor: ParsingCursor|null): P_Parser {
 		return new this.constr(cursor, ...this.otherParams);
 	}
 
@@ -59,7 +59,7 @@ export abstract class P_Parser {
 	/** Child nodes */
 	children: P_Parser[] = [];
 	/** Shorthand for last of this.children */
-	protected parsingChild: P_Parser = null;
+	protected parsingChild: P_Parser|null = null;
 	/** If try try if following text can be styled/linked */
 	private tryTextAlternative = false;
 

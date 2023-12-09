@@ -113,6 +113,8 @@ export class P_Link extends P_Parser {
 			}
 			return AfterParseResult.consumed;
 		}
+
+		return AfterParseResult.consumed;
 	}
 
 	toHtmlString(): string {

@@ -63,7 +63,7 @@ export function escapeRegex(strToEscape: string): string {
 }
 
 export interface AdditionalRedditData {
-	media_metadata: RedditMediaData;
+	media_metadata?: RedditMediaData;
 }
 
 export interface RedditMediaData {

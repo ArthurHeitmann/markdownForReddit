@@ -32,7 +32,7 @@ export class P_Image extends P_Parser {
 		if (this.cursor.previousChar === "\\")
 			return false;
 		if (imgUrlRegex.test(this.cursor.remainingText)) {
-			const match = imgUrlRegex.exec(this.cursor.remainingText);
+			const match = imgUrlRegex.exec(this.cursor.remainingText)!;
 			const urlStr = match[1];
 			if (urlStr.startsWith("/"))
 				return true;
@@ -44,7 +44,7 @@ export class P_Image extends P_Parser {
 		if (this.cursor.remainingText.startsWith("![")) {
 			if (this.cursor.redditData.media_metadata && Object.keys(this.cursor.redditData.media_metadata).length > 0) {
 				if (imgIdRegex.test(this.cursor.remainingText)) {
-					const match = imgIdRegex.exec(this.cursor.remainingText);
+					const match = imgIdRegex.exec(this.cursor.remainingText)!;
 					if (match[1] in this.cursor.redditData.media_metadata)
 						return true;
 				}
@@ -96,12 +96,12 @@ export class P_Image extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		let url: string;
+		let url = "";
 		if (this.cursor.redditData.media_metadata && this.url in this.cursor.redditData.media_metadata) {
 			const media = this.cursor.redditData.media_metadata[this.url];
-			url = media.s.u;
+			url = media.s.u ?? "";
 		}
-		else
+		if (!url)
 			url = this.url;
 		console.log(this.titleSurrounding);
 		console.log(this.title);

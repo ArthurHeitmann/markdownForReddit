@@ -46,6 +46,8 @@ export class P_CodeMultilineFenced extends P_Parser {
 			}
 			return AfterParseResult.consumed;
 		}
+
+		return AfterParseResult.consumed;
 	}
 
 	toHtmlString(): string {
