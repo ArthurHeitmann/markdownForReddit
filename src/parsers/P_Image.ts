@@ -1,6 +1,6 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
-import {escapeAttr} from "../utils.js";
+import {MediaDisplayPolicy, escapeAttr} from "../utils.js";
 
 enum ManualLinkParsingState {
 	start, content, separation, link, title, end
@@ -27,27 +27,19 @@ export class P_Image extends P_Parser {
 	private title: string = "";
 
 	canStart(): boolean {
+		if (!this.cursor.remainingText.startsWith("!["))
+			return false;
 		if (!(/^(|\W)$/.test(this.cursor.previousChar) || this.cursor.isNewNode))
 			return false;
 		if (this.cursor.previousChar === "\\")
 			return false;
-		if (imgUrlRegex.test(this.cursor.remainingText)) {
-			const match = imgUrlRegex.exec(this.cursor.remainingText)!;
-			const urlStr = match[1];
-			if (urlStr.startsWith("/"))
-				return true;
-			const url = new URL(urlStr);
-			const host = url.hostname;
-			const domain = host.split(".").slice(-2).join(".");
-			return allowedDomains.includes(domain);
-		}
-		if (this.cursor.remainingText.startsWith("![")) {
-			if (this.cursor.redditData.media_metadata && Object.keys(this.cursor.redditData.media_metadata).length > 0) {
-				if (imgIdRegex.test(this.cursor.remainingText)) {
-					const match = imgIdRegex.exec(this.cursor.remainingText)!;
-					if (match[1] in this.cursor.redditData.media_metadata)
-						return true;
-				}
+		if (imgUrlRegex.test(this.cursor.remainingText))
+			return true;
+		if (this.cursor.redditData.media_metadata && Object.keys(this.cursor.redditData.media_metadata).length > 0) {
+			if (imgIdRegex.test(this.cursor.remainingText)) {
+				const match = imgIdRegex.exec(this.cursor.remainingText)!;
+				if (match[1] in this.cursor.redditData.media_metadata)
+					return true;
 			}
 		}
 		return false;
@@ -97,14 +89,65 @@ export class P_Image extends P_Parser {
 
 	toHtmlString(): string {
 		let url = "";
+		let dimensions: {width: number, height: number} | undefined;
+		let useLink = false;
+		const imageDisplayPolicy = this.cursor.redditData.mediaDisplayPolicy ?? MediaDisplayPolicy.imageOrGif;
 		if (this.cursor.redditData.media_metadata && this.url in this.cursor.redditData.media_metadata) {
 			const media = this.cursor.redditData.media_metadata[this.url];
-			url = media.s.u ?? "";
+			url = media.s.u ?? media.s.gif ?? "";
+			if (media.s.x && media.s.y) {
+				dimensions = {
+					width: media.s.x,
+					height: media.s.y,
+				};
+			}
+			if (imageDisplayPolicy === MediaDisplayPolicy.emoteOnly && !this.url.includes("emote|"))
+				useLink = true;
 		}
+		else {
+			if (this.url.startsWith("https://")) {
+				const urlObj = new URL(this.url);
+				const domain = urlObj.hostname.split(".").slice(-2).join(".");
+				if (!allowedDomains.includes(domain))
+					useLink = true;
+			}
+		}
+		if (imageDisplayPolicy === MediaDisplayPolicy.link)
+			useLink = true;
 		if (!url)
 			url = this.url;
-		console.log(this.titleSurrounding);
-		console.log(this.title);
-		return `<img src="${escapeAttr(encodeURI(url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}${this.alt ? ` alt="${escapeAttr(this.alt)}"` : ""}>`;
+		
+		let tag: string;
+		const attributes: [string, string][] = [];
+		let useClosingTag: boolean;
+		let innerHtml = "";
+		if (useLink) {
+			tag = "a";
+			useClosingTag = true;
+			attributes.push(["href", encodeURI(url)]);
+			if (this.title)
+				attributes.push(["title", this.title]);
+			if (this.alt)
+				innerHtml = escapeAttr(this.alt);
+		}
+		else {
+			tag = "img";
+			useClosingTag = false;
+			attributes.push(["src", encodeURI(url)]);
+			if (this.title)
+				attributes.push(["title", this.title]);
+			if (this.alt)
+				attributes.push(["alt", this.alt]);
+			if (dimensions) {
+				attributes.push(["width", dimensions.width.toString()]);
+				attributes.push(["height", dimensions.height.toString()]);
+			}
+		}
+		let html = `<${tag}`;
+		for (const [key, value] of attributes) {
+			html += ` ${key}="${escapeAttr(value)}"`;
+		}
+		html += useClosingTag ? `>${innerHtml}</${tag}>` : ">";
+		return html;
 	}
 }

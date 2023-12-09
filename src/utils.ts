@@ -64,6 +64,7 @@ export function escapeRegex(strToEscape: string): string {
 
 export interface AdditionalRedditData {
 	media_metadata?: RedditMediaData;
+	mediaDisplayPolicy?: MediaDisplayPolicy;
 }
 
 export interface RedditMediaData {
@@ -84,4 +85,10 @@ export interface RedditMediaDataEntry {
 	u?: string,
 	gif?: string,
 	mp4?: string,
+}
+
+export enum MediaDisplayPolicy {
+	link,
+	emoteOnly,
+	imageOrGif,
 }

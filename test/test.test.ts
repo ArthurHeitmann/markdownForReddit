@@ -1,5 +1,5 @@
 import {parseMarkdown} from "../src/main.js";
-import { AdditionalRedditData } from "../src/utils.js";
+import { AdditionalRedditData, MediaDisplayPolicy } from "../src/utils.js";
 import {expect} from 'chai';
 
 const debug = false;
@@ -541,8 +541,8 @@ describe("Markdown to HTML", () => {
 			});
 	
 			it("Disallowed domains", () => {
-				testMarkdown("![alt text](https://www.google.com/path/to/img.jpg)", `<p>!<a href="https://www.google.com/path/to/img.jpg">alt text</a></p>`)
-				testMarkdown("![alt text](https://i.redd.it.youtube.com/path/to/img.jpg)", `<p>!<a href="https://i.redd.it.youtube.com/path/to/img.jpg">alt text</a></p>`)
+				testMarkdown("![alt text](https://www.google.com/path/to/img.jpg)", `<p><a href="https://www.google.com/path/to/img.jpg">alt text</a></p>`)
+				testMarkdown("![alt text](https://i.redd.it.youtube.com/path/to/img.jpg)", `<p><a href="https://i.redd.it.youtube.com/path/to/img.jpg">alt text</a></p>`)
 			});
 	
 			it("Escaped", () => {
@@ -573,7 +573,7 @@ describe("Markdown to HTML", () => {
 			it("With additional media metadata", () => {
 				testMarkdown(
 					"![img](emote|t5_2th52|27189)",
-					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img"></p>`,
+					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44"></p>`,
 					{
 						media_metadata: {
 							"emote|t5_2th52|27189": {
@@ -592,8 +592,50 @@ describe("Markdown to HTML", () => {
 					}
 				)
 				testMarkdown(
+					"![img](emote|t5_2th52|27189)",
+					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44"></p>`,
+					{
+						media_metadata: {
+							"emote|t5_2th52|27189": {
+								"status": "valid",
+								"e": "Image",
+								"m": "image/png",
+								"s": {
+									"y": 44,
+									"x": 60,
+									"u": "https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png"
+								},
+								"t": "sticker",
+								"id": "emote|t5_2th52|27189"
+							}
+						},
+						mediaDisplayPolicy: MediaDisplayPolicy.emoteOnly,
+					}
+				)
+				testMarkdown(
+					"![img](emote|t5_2th52|27189)",
+					`<p><a href="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png">img</a></p>`,
+					{
+						media_metadata: {
+							"emote|t5_2th52|27189": {
+								"status": "valid",
+								"e": "Image",
+								"m": "image/png",
+								"s": {
+									"y": 44,
+									"x": 60,
+									"u": "https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png"
+								},
+								"t": "sticker",
+								"id": "emote|t5_2th52|27189"
+							}
+						},
+						mediaDisplayPolicy: MediaDisplayPolicy.link,
+					}
+				)
+				testMarkdown(
 					"![img](eobz0qkh7x4c1 \"Image caption: tap the community topic and ranking to explore similar communities.\")",
-					`<p><img src="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities." alt="img"></p>`,
+					`<p><img src="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities." alt="img" width="1740" height="1704"></p>`,
 					{
 						media_metadata: {
 							"eobz0qkh7x4c1": {
@@ -608,7 +650,28 @@ describe("Markdown to HTML", () => {
 								},
 								"id": "eobz0qkh7x4c1"
 							}
-						}
+						},
+					}
+				)
+				testMarkdown(
+					"![img](eobz0qkh7x4c1 \"Image caption: tap the community topic and ranking to explore similar communities.\")",
+					`<p><a href="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities.">img</a></p>`,
+					{
+						media_metadata: {
+							"eobz0qkh7x4c1": {
+								"status": "valid",
+								"e": "Image",
+								"m": "image/png",
+								"p": [],
+								"s": {
+									"y": 1704,
+									"x": 1740,
+									"u": "https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3"
+								},
+								"id": "eobz0qkh7x4c1"
+							}
+						},
+						mediaDisplayPolicy: MediaDisplayPolicy.emoteOnly,
 					}
 				)
 			});
