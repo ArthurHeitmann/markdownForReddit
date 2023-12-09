@@ -1,6 +1,6 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
-import {escapeHtml} from "../utils.js";
+import {escapeHtml, escapeAttr} from "../utils.js";
 
 enum LinkParsingState {
 	notStarted, reddit, schema, manual
@@ -28,9 +28,9 @@ export class P_Link extends P_Parser {
 
 	canStart(): boolean {
 		return (
-			redditRegex.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\" ||
+			redditRegex.test(this.cursor.remainingText) ||
 			schemaRegex.test(this.cursor.remainingText) ||
-			manualRegex.test(this.cursor.remainingText)
+			manualRegex.test(this.cursor.remainingText) && this.cursor.previousChar !== "\\"
 		) && (/^(|\W)$/.test(this.cursor.previousChar) || this.cursor.isNewNode);
 	}
 
@@ -96,7 +96,7 @@ export class P_Link extends P_Parser {
 					this.url += this.cursor.currentChar;
 			}
 			else if (this.manualLinkParsingState === ManualLinkParsingState.title) {
-				if (this.title === "" && /["']/.test(this.cursor.currentChar)) {
+				if (this.title === "" && this.titleSurrounding === "" && /["']/.test(this.cursor.currentChar)) {
 					this.titleSurrounding = this.cursor.currentChar;
 					return AfterParseResult.consumed;
 				}
@@ -116,6 +116,6 @@ export class P_Link extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<a href="${escapeHtml(encodeURI(this.url))}"${this.title ? ` title="${this.title}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
+		return `<a href="${escapeAttr(encodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
 	}
 }

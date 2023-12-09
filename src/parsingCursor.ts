@@ -1,3 +1,5 @@
+import { AdditionalRedditData } from "./utils.js";
+
 /**
  * Holds information about the current parsing state (column, current char, ...)
  */
@@ -28,8 +30,10 @@ export class ParsingCursor {
 	isLastChar: boolean;
 	/** if true P_Link can ignore the previous char */
 	isNewNode: boolean = false;
+	/** Additional data passed from reddit API */
+	redditData: AdditionalRedditData;
 
-	constructor(markdown: string) {
+	constructor(markdown: string, redditData?: AdditionalRedditData) {
 		this.allText = markdown;
 		this.allLines = markdown.split("\n").map(line => `${line}\n`);
 		this.currentLine = this.allLines[0];
@@ -37,6 +41,7 @@ export class ParsingCursor {
 		this.remainingText = markdown;
 		this.currentChar = markdown[0];
 		this.isLastChar = markdown.length < 2;
+		this.redditData = redditData ?? { media_metadata: {} };
 	}
 
 	incrementCursor() {

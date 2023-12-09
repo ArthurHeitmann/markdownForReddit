@@ -4,6 +4,7 @@ import {P_Text} from "./P_Text.js";
 import {P_InlineCode} from "./P_InlineCode.js";
 import {P_Superscript} from "./P_Superscript.js";
 import {P_Link} from "./P_Link.js";
+import { P_Image } from "./P_Image.js";
 
 export interface BasicTextChildOptions {
 	allowLinks?: boolean
@@ -31,12 +32,13 @@ export class P_BasicText extends P_Parser {
 		this.possibleChildren[0] = ParserType.from(P_StyledText, <StyledTextOptions> { excludedCharSeq: options.excludedStyleTypes || [] });
 		if (options.allowLinks) {
 			this.possibleChildren.splice(0, 0, ParserType.from(P_Link));
-			if (!this.possibleChildren[1].otherParams[0])
-				this.possibleChildren[1].otherParams[0] = {};
+			this.possibleChildren.splice(1, 0, ParserType.from(P_Image));
 			if (!this.possibleChildren[2].otherParams[0])
 				this.possibleChildren[2].otherParams[0] = {};
-			(this.possibleChildren[1].otherParams[0] as BasicTextChildOptions).allowLinks = true;
+			if (!this.possibleChildren[3].otherParams[0])
+				this.possibleChildren[3].otherParams[0] = {};
 			(this.possibleChildren[2].otherParams[0] as BasicTextChildOptions).allowLinks = true;
+			(this.possibleChildren[3].otherParams[0] as BasicTextChildOptions).allowLinks = true;
 		}
 	}
 }

@@ -1,10 +1,11 @@
 import {parseMarkdown} from "../src/main.js";
+import { AdditionalRedditData } from "../src/utils.js";
 import {expect} from 'chai';
 
 const debug = false;
 
-function testMarkdown(markdown, expectedHtml) {
-	const generatedHtml = parseMarkdown(markdown);
+function testMarkdown(markdown, expectedHtml, additionalRedditData?: AdditionalRedditData) {
+	const generatedHtml = parseMarkdown(markdown, additionalRedditData);
 	if (debug)
 		console.log(`markdown: \n${markdown}\n  expected:  ${expectedHtml}\n  generated: ${generatedHtml}\n\n`)
 	expect(generatedHtml).to.equal(expectedHtml);
@@ -493,7 +494,7 @@ describe("Markdown to HTML", () => {
 		describe("Schema Links", () => {
 			it("schemas", () => {
 				testMarkdown("https://reddit.com", `<p><a href="https://reddit.com">https://reddit.com</a></p>`)
-				testMarkdown("https://reddit.com/r/all/top?t=all&count=10", `<p><a href="https://reddit.com/r/all/top?t=all&amp;count=10">https://reddit.com/r/all/top?t=all&amp;count=10</a></p>`)
+				testMarkdown("https://reddit.com/r/all/top?t=all&count=10", `<p><a href="https://reddit.com/r/all/top?t=all&count=10">https://reddit.com/r/all/top?t=all&amp;count=10</a></p>`)
 			});
 
 			it("different environments", () => {
@@ -507,12 +508,110 @@ describe("Markdown to HTML", () => {
 			});
 		});
 
-		describe("Menual Links", () => {
+		describe("Manual Links", () => {
+			it("simple", () => {
+				testMarkdown("[text](/link)", `<p><a href="/link">text</a></p>`)
+				testMarkdown("[text](/link \"title\")", `<p><a href="/link" title="title">text</a></p>`)
+			});
 
+			it("Escaped", () => {
+				testMarkdown("\\[text](/link)", `<p>[text](/link)</p>`)
+			});
+
+			it("no xss", () => {
+				testMarkdown(`[text "><script></script><!--](/xss)`, `<p><a href="/xss">text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--</a></p>`)
+			});
 		});
 
 		it("no xss", () => {
 			testMarkdown(`[text "><script></script><!--](/xss)`, `<p><a href="/xss">text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--</a></p>`)
+		});
+	});
+
+	describe("Images", () => {
+		describe("URL", () => {
+			it("Simple", () => {
+				testMarkdown("![alt text](/path/to/img.jpg)", `<p><img src="/path/to/img.jpg" alt="alt text"></p>`)
+			});
+	
+			it("Allowed domains", () => {
+				testMarkdown("![alt text](https://i.redd.it/path/to/img.jpg)", `<p><img src="https://i.redd.it/path/to/img.jpg" alt="alt text"></p>`)
+				testMarkdown("![alt text](https://preview.redd.it/path/to/img.jpg)", `<p><img src="https://preview.redd.it/path/to/img.jpg" alt="alt text"></p>`)
+				testMarkdown("![alt text](https://www.reddit.com/path/to/img.jpg)", `<p><img src="https://www.reddit.com/path/to/img.jpg" alt="alt text"></p>`)
+			});
+	
+			it("Disallowed domains", () => {
+				testMarkdown("![alt text](https://www.google.com/path/to/img.jpg)", `<p>!<a href="https://www.google.com/path/to/img.jpg">alt text</a></p>`)
+				testMarkdown("![alt text](https://i.redd.it.youtube.com/path/to/img.jpg)", `<p>!<a href="https://i.redd.it.youtube.com/path/to/img.jpg">alt text</a></p>`)
+			});
+	
+			it("Escaped", () => {
+				testMarkdown("\\![alt text](/path/to/img.jpg)", `<p>\\!<a href="/path/to/img.jpg">alt text</a></p>`)
+				testMarkdown("\\!\\[alt text](/path/to/img.jpg)", `<p>\\![alt text](/path/to/img.jpg)</p>`)
+			});
+	
+			it("No alt", () => {
+				testMarkdown("![](/path/to/img.jpg)", `<p><img src="/path/to/img.jpg"></p>`)
+			});
+	
+			it("No src", () => {
+				testMarkdown("![alt text]", `<p>![alt text]</p>`)
+			});
+	
+			it("No xss", () => {
+				testMarkdown(`![text "><script></script><!--](/xss)`, `<p><img src="/xss" alt="text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--"></p>`)
+				testMarkdown(`![text](/xss '"><script></script><!--')`, `<p><img src="/xss" title="&quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--" alt="text"></p>`)
+			});
+		});
+		
+		describe("ID", () => {
+			it("No media metadata", () => {
+				testMarkdown("![img](27189)", `<p>![img](27189)</p>`)
+				testMarkdown("![img](emote|t5_2th52|27189)", `<p>![img](emote|t5_2th52|27189)</p>`)
+			});
+
+			it("With additional media metadata", () => {
+				testMarkdown(
+					"![img](emote|t5_2th52|27189)",
+					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img"></p>`,
+					{
+						media_metadata: {
+							"emote|t5_2th52|27189": {
+								"status": "valid",
+								"e": "Image",
+								"m": "image/png",
+								"s": {
+									"y": 44,
+									"x": 60,
+									"u": "https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png"
+								},
+								"t": "sticker",
+								"id": "emote|t5_2th52|27189"
+							}
+						}
+					}
+				)
+				testMarkdown(
+					"![img](eobz0qkh7x4c1 \"Image caption: tap the community topic and ranking to explore similar communities.\")",
+					`<p><img src="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities." alt="img"></p>`,
+					{
+						media_metadata: {
+							"eobz0qkh7x4c1": {
+								"status": "valid",
+								"e": "Image",
+								"m": "image/png",
+								"p": [],
+								"s": {
+									"y": 1704,
+									"x": 1740,
+									"u": "https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3"
+								},
+								"id": "eobz0qkh7x4c1"
+							}
+						}
+					}
+				)
+			});
 		});
 	});
 

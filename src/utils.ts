@@ -49,7 +49,39 @@ export function escapeHtml(string: string): string {
 		: html;
 }
 
+export function escapeAttr(string: string): string {
+	return string
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#39;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;");
+}
+
 /** escapes all regex special characters */
 export function escapeRegex(strToEscape: string): string {
 	return strToEscape.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
+
+export interface AdditionalRedditData {
+	media_metadata: RedditMediaData;
+}
+
+export interface RedditMediaData {
+	[key: string]: {
+		e: string,
+		id: string,
+		m: string,
+		p?: RedditMediaDataEntry[],
+		s: RedditMediaDataEntry,
+		status: string,
+		t?: string,
+	}
+}
+
+export interface RedditMediaDataEntry {
+	x: number,
+	y: number,
+	u?: string,
+	gif?: string,
+	mp4?: string,
 }
