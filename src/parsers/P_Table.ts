@@ -49,7 +49,7 @@ export class P_Table extends P_Parser {
 		const dividerPipes = P_Table.countRowPipes(this.cursor.nextLine);
 		return headerPipes >= 1 && dividerPipes >= 1 && (
 			/^\|?(([^|\n]+|\|)\|)+/.test(this.cursor.currentLine) &&
-			/^\|?((:?-*:?)\|)*(:?-*:?)\|? *(\n|$)/.test(this.cursor.nextLine)
+			/^ *\|?((:?-*:?)\|)*(:?-*:?)\|? *(\n|$)/.test(this.cursor.nextLine)
 		);
 	}
 
@@ -92,7 +92,7 @@ export class P_Table extends P_Parser {
 			else if (this.dividerParsingState === DividerParsingState.firstChar) {
 				if (this.cursor.currentChar === ":")
 					this.columnAlignment[this.currentColumn] = "left";
-				if (this.cursor.remainingText[1] === ":")
+				if (this.cursor.currentChar != " " && this.cursor.remainingText[1] === ":")
 					this.dividerParsingState = DividerParsingState.lastChar;
 				else if (this.cursor.remainingText[1] === "\n" || this.cursor.remainingText.length === 1)
 					this.dividerParsingState = DividerParsingState.completed;
@@ -102,7 +102,7 @@ export class P_Table extends P_Parser {
 				}
 				else if (this.cursor.remainingText[2] === "|" || this.cursor.remainingText[2] === "\n" || this.cursor.remainingText.length === 2)
 					this.dividerParsingState = DividerParsingState.lastChar;
-				else
+				else if (this.cursor.currentChar != " ")
 					this.dividerParsingState = DividerParsingState.spacer;
 			}
 			else if (this.dividerParsingState === DividerParsingState.spacer) {
