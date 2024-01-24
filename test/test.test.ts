@@ -187,6 +187,16 @@ describe("Markdown to HTML", () => {
 			testMarkdown("> quote  \n> l2", `<blockquote>\n<p>quote<br/>\nl2</p>\n</blockquote>`)
 		});
 
+		it("No space after >", () => {
+			testMarkdown(">quote", `<blockquote>\n<p>quote</p>\n</blockquote>`)
+		});
+
+		it("Multiline, no space after >", () => {
+			testMarkdown("" +
+				">quote  \n" +
+				">l2", `<blockquote>\n<p>quote<br/>\nl2</p>\n</blockquote>`)
+		});
+
 		it("Multi-paragraph Quote", () => {
 			testMarkdown("> quote\n> \n> b2", `<blockquote>\n<p>quote</p>\n\n<p>b2</p>\n</blockquote>`)
 		});
@@ -206,6 +216,34 @@ describe("Markdown to HTML", () => {
 
 		it("Escaped Quotes", () => {
 			testMarkdown("\\> not a quote", `<p>&gt; not a quote</p>`)
+		});
+
+		it("Quote with list", () => {
+			testMarkdown("" +
+				"> quote\n" +
+				"> \n" +
+				"> - list\n" +
+				"> - list 2",
+				`<blockquote>\n<p>quote</p>\n\n<ul>\n<li>list</li>\n<li>list 2</li>\n</ul>\n</blockquote>`)
+		});
+
+		it("Quote with nested list", () => {
+			testMarkdown("" +
+				"> quote\n" +
+				"> \n" +
+				"> - list\n" +
+				">   - nested list\n" +
+				">     - l3",
+				`<blockquote>\n<p>quote</p>\n\n<ul>\n<li>list\n\n<ul>\n<li>nested list\n\n<ul>\n<li>l3</li>\n</ul></li>\n</ul></li>\n</ul>\n</blockquote>`)
+		});
+		
+		it("Quote with nested list, complex, no space after >", () => {
+			testMarkdown("" +
+				"># quote\n" +
+				">- list\n" +
+				">  - nested list\n" +
+				">    - nested nested list",
+				`<blockquote>\n<h1>quote</h1>\n\n<ul>\n<li>list\n\n<ul>\n<li>nested list\n\n<ul>\n<li>nested nested list</li>\n</ul></li>\n</ul></li>\n</ul>\n</blockquote>`)
 		});
 	});
 
@@ -295,6 +333,24 @@ describe("Markdown to HTML", () => {
 								"<li>2.2.2 <em>i</em></li>\n" +
 							"</ul></li>\n" +
 						"</ul></li>\n" +
+					"</ul>")
+			});
+
+			it("3 levels", () => {
+				testMarkdown("" +
+					"- l1\n" +
+					"  - l1.1\n" +
+					"    - l1.1.1\n" +
+					"  - l1.2\n" +
+					"- l2",
+					"<ul>\n" +
+						"<li>l1\n\n<ul>\n" +
+							"<li>l1.1\n\n<ul>\n" +
+								"<li>l1.1.1</li>\n" +
+							"</ul></li>\n" +
+							"<li>l1.2</li>\n" +
+						"</ul></li>\n" +
+						"<li>l2</li>\n" +
 					"</ul>")
 			});
 
