@@ -12,6 +12,7 @@ import { AdditionalRedditData } from "./utils.js";
 export function parseMarkdown(markdown: string, additionalRedditData?: AdditionalRedditData): string {
 	// remove empty lines at start and end
 	markdown = markdown
+		.replace(/\r/g, "")
 		.replace(/^(\s*\n)*|(\s*\n)*$/g, "")
 		.replace(/\n\s*$/g, "\n");
 

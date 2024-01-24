@@ -1463,7 +1463,7 @@ var ParsingCursor = class {
 
 // src/main.ts
 function parseMarkdown(markdown, additionalRedditData) {
-  markdown = markdown.replace(/^(\s*\n)*|(\s*\n)*$/g, "").replace(/\n\s*$/g, "\n");
+  markdown = markdown.replace(/\r/g, "").replace(/^(\s*\n)*|(\s*\n)*$/g, "").replace(/\n\s*$/g, "\n");
   const cursor = new ParsingCursor(markdown, additionalRedditData);
   const rootParser = new P_Root(cursor);
   let parseResult;
