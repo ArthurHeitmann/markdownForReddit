@@ -26,6 +26,8 @@ enum DividerParsingState {
  * | formatting doesn't matter | that much |
  *
  * (here the H 2 column will be center formatted)
+ * 
+ * Leading and trailing pipes are optional.
  */
 export class P_Table extends P_Parser {
 	id: string = "table";
@@ -38,16 +40,16 @@ export class P_Table extends P_Parser {
 	private columns: number = 0;
 	private currentColumn: number = 0;
 	private currentRow: number = 0;
-	private columnAlignment: alignment[] = [];
+	private columnAlignment: { [i: number]: alignment } = {};
 	private headerValues: P_BasicText[] = [];
 	private cellValues: P_BasicText[][] = [];
 
 	canStart(): boolean {
 		const headerPipes = P_Table.countRowPipes(this.cursor.currentLine);
 		const dividerPipes = P_Table.countRowPipes(this.cursor.nextLine);
-		return headerPipes >= 2 && dividerPipes >= 2 && (
-			/^\|((.*[^\\]|)\|+) *\n/.test(this.cursor.currentLine) &&
-			/^\|([:\- ]*\|+)+ *(\n|$)/.test(this.cursor.nextLine)
+		return headerPipes >= 1 && dividerPipes >= 1 && (
+			/^\|?(([^|\n]+|\|)\|)+/.test(this.cursor.currentLine) &&
+			/^\|?((:?-*:?)\|)*(:?-*:?)\|? *(\n|$)/.test(this.cursor.nextLine)
 		);
 	}
 
@@ -65,34 +67,46 @@ export class P_Table extends P_Parser {
 		}
 
 		else if (this.parsingState === TableParsingState.divider) {
+			if (this.cursor.column === 0 && this.cursor.currentChar !== "|")
+				this.dividerParsingState = DividerParsingState.firstChar;
 			if (this.dividerParsingState === DividerParsingState.pipe) {
-				if(/^\| *\n/.test(this.cursor.remainingText)) {
-					this.dividerParsingState = DividerParsingState.completed;
+				if (this.cursor.currentChar === "\n") {
+					if (P_Table.countRowPipes(this.cursor.nextLine) >= 1) {
+						this.dataRowParsingState = DataRowParsingState.pipe;
+						this.parsingState = TableParsingState.rows;
+						this.currentColumn = 0;
+						this.cellValues.push([]);
+					}
+					else
+						return AfterParseResult.ended;
 				}
+				else if (this.cursor.remainingText[1] === "|") {
+					this.dividerParsingState = DividerParsingState.pipe;
+					this.currentColumn++;
+				}
+				else if (/^\|? *(\n|\n)/.test(this.cursor.remainingText))
+					this.dividerParsingState = DividerParsingState.completed;
 				else
 					this.dividerParsingState = DividerParsingState.firstChar;
 			}
 			else if (this.dividerParsingState === DividerParsingState.firstChar) {
-				if (this.cursor.currentChar === ":") {
+				if (this.cursor.currentChar === ":")
 					this.columnAlignment[this.currentColumn] = "left";
-					if (this.cursor.remainingText[2] === "|")
-						this.dividerParsingState = DividerParsingState.lastChar;
-					else
-						this.dividerParsingState = DividerParsingState.spacer;
+				if (this.cursor.remainingText[1] === ":")
+					this.dividerParsingState = DividerParsingState.lastChar;
+				else if (this.cursor.remainingText[1] === "\n" || this.cursor.remainingText.length === 1)
+					this.dividerParsingState = DividerParsingState.completed;
+				else if (this.cursor.remainingText[1] === "|") {
+					this.dividerParsingState = DividerParsingState.pipe;
+					this.currentColumn++;
 				}
-				else {
-					if (this.cursor.remainingText[1] === "|") {
-						this.dividerParsingState = DividerParsingState.pipe;
-						this.currentColumn++;
-					}
-					else if (this.cursor.remainingText[2] === "|")
-						this.dividerParsingState = DividerParsingState.lastChar;
-					else
-						this.dividerParsingState = DividerParsingState.spacer;
-				}
+				else if (this.cursor.remainingText[2] === "|" || this.cursor.remainingText[2] === "\n" || this.cursor.remainingText.length === 2)
+					this.dividerParsingState = DividerParsingState.lastChar;
+				else
+					this.dividerParsingState = DividerParsingState.spacer;
 			}
 			else if (this.dividerParsingState === DividerParsingState.spacer) {
-				if (this.cursor.remainingText[2] === "|")
+				if (this.cursor.remainingText[2] === "|" || this.cursor.remainingText[2] === "\n" || this.cursor.remainingText.length === 2)
 					this.dividerParsingState = DividerParsingState.lastChar;
 			}
 			else if (this.dividerParsingState === DividerParsingState.lastChar) {
@@ -102,12 +116,16 @@ export class P_Table extends P_Parser {
 					else
 						this.columnAlignment[this.currentColumn] = "right";
 				}
-				this.dividerParsingState = DividerParsingState.pipe;
-				this.currentColumn++;
+				if (this.cursor.remainingText[1] === "\n")
+					this.dividerParsingState = DividerParsingState.completed;
+				else {
+					this.dividerParsingState = DividerParsingState.pipe;
+					this.currentColumn++;
+				}
 			}
 			else if (this.dividerParsingState === DividerParsingState.completed) {
 				if (this.cursor.currentChar === "\n") {
-					if (P_Table.countRowPipes(this.cursor.nextLine) >= 2) {
+					if (P_Table.countRowPipes(this.cursor.nextLine) >= 1) {
 						this.dataRowParsingState = DataRowParsingState.pipe;
 						this.parsingState = TableParsingState.rows;
 						this.currentColumn = 0;
@@ -124,9 +142,12 @@ export class P_Table extends P_Parser {
 			return this.parseDataRow(
 				() => this.cellValues[this.currentRow].push(new P_BasicText(this.cursor, <BasicTextOptions> { allowLinks: true })),
 				() => this.cellValues[this.currentRow][this.currentColumn].parseChar(),
-				() => this.currentColumn++,
 				() => {
-					if (P_Table.countRowPipes(this.cursor.nextLine) < 2)
+					if (this.currentColumn + 1 < this.columns)
+						this.currentColumn++;
+				},
+				() => {
+					if (P_Table.countRowPipes(this.cursor.nextLine) === 0)
 						return AfterParseResult.ended;
 					else {
 						this.currentRow++;
@@ -165,20 +186,29 @@ export class P_Table extends P_Parser {
 	}
 
 	private parseDataRow(onInitContent: () => void, onParseChar: () => void, onColumnCompleted: () => void, onRowCompleted: () => AfterParseResult): AfterParseResult {
+		if (this.cursor.column === 0 && this.cursor.currentChar !== "|") {
+			onInitContent();
+			if (this.cursor.currentChar === " ")
+				this.dataRowParsingState = DataRowParsingState.leadingWs;
+			else
+				this.dataRowParsingState = DataRowParsingState.content;
+		}
 		if (this.dataRowParsingState === DataRowParsingState.pipe) {
-			if (/^\|\s*(\n|$)/.test(this.cursor.remainingText)) {
+			if (/^\|?\s*(\n|$)/.test(this.cursor.remainingText)) {
 				this.dataRowParsingState = DataRowParsingState.completed;
+				if (this.cursor.currentChar === "\n" || this.cursor.remainingText.length === 1)
+					return onRowCompleted();
 			}
 			else {
 				onInitContent();
-				if (this.cursor.remainingText[1] === " ")
-					this.dataRowParsingState = DataRowParsingState.leadingWs;
-				else if (this.cursor.remainingText[1] === "|") {
+				if (this.cursor.remainingText[1] === "|") {
 					onColumnCompleted();
 					this.dataRowParsingState = DataRowParsingState.pipe;
 				}
-				else if (/^\| *\n/.test(this.cursor.remainingText))
+				else if (/^\|? *\n/.test(this.cursor.remainingText))
 					this.dataRowParsingState = DataRowParsingState.completed;
+				else if (this.cursor.remainingText[1] === " ")
+					this.dataRowParsingState = DataRowParsingState.leadingWs;
 				else
 					this.dataRowParsingState = DataRowParsingState.content;
 			}
@@ -188,8 +218,11 @@ export class P_Table extends P_Parser {
 				this.dataRowParsingState = DataRowParsingState.pipe;
 				onColumnCompleted();
 			}
+			else if (this.cursor.remainingText[1] === "\n" || this.cursor.remainingText.length === 1)
+				this.dataRowParsingState = DataRowParsingState.completed;
 			else if (this.cursor.remainingText[1] !== " ")
 				this.dataRowParsingState = DataRowParsingState.content;
+				
 		}
 		else if (this.dataRowParsingState === DataRowParsingState.content) {
 			this.cursor.isNewNode = true;
@@ -200,6 +233,12 @@ export class P_Table extends P_Parser {
 			}
 			else if (/^(. +|[^\\])\|/.test(this.cursor.remainingText))
 				this.dataRowParsingState = DataRowParsingState.end;
+			else if (/^. *(\n|$)/.test(this.cursor.remainingText)) {
+				this.dataRowParsingState = DataRowParsingState.completed;
+				onColumnCompleted();
+				if (this.cursor.currentChar === "\n" || this.cursor.remainingText.length === 1)
+					onRowCompleted();
+			}
 		}
 		else if (this.dataRowParsingState === DataRowParsingState.end) {
 			if (this.cursor.remainingText[1] === "|") {
@@ -211,8 +250,8 @@ export class P_Table extends P_Parser {
 			}
 		}
 		else if (this.dataRowParsingState === DataRowParsingState.completed) {
-			if (this.cursor.currentChar === "\n")
-				return  onRowCompleted();
+			if (this.cursor.currentChar === "\n" || this.cursor.remainingText.length === 1)
+				return onRowCompleted();
 		}
 
 		return AfterParseResult.consumed;
