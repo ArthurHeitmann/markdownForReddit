@@ -13,7 +13,7 @@ export function parseMarkdown(markdown: string, additionalRedditData?: Additiona
 	// remove empty lines at start and end
 	markdown = markdown
 		.replace(/\r/g, "")
-		.replace(/^(\s*\n)*|(\s*\n)*$/g, "")
+		.replace(/^\s*\n|\s*$/g, "")
 		.replace(/\n\s*$/g, "\n");
 
 	const cursor = new ParsingCursor(markdown, additionalRedditData);

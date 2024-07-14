@@ -14,7 +14,7 @@ export class P_CodeMultilineFenced extends P_Parser {
 	private parsedStartTicks = 0;
 
 	canStart(): boolean {
-		return this.cursor.column === 0 && /^(`{3,})\n(.*\n)*\1($|\n)/.test(this.cursor.remainingText);
+		return this.cursor.column === 0 && /^(`{3,})\n[\s\S]*\n\1($|\n)/.test(this.cursor.remainingText);
 	}
 
 	canConsumeChar(): boolean {
