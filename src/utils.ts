@@ -62,6 +62,14 @@ export function escapeRegex(strToEscape: string): string {
 	return strToEscape.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
 
+export function tryEncodeURI(uri: string): string {
+	try {
+		return encodeURI(uri);
+	} catch (e) {
+		return uri;
+	}
+}
+
 export interface AdditionalRedditData {
 	media_metadata?: RedditMediaData;
 	mediaDisplayPolicy?: MediaDisplayPolicy;

@@ -1,6 +1,6 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
-import {MediaDisplayPolicy, escapeAttr} from "../utils.js";
+import {MediaDisplayPolicy, escapeAttr, tryEncodeURI} from "../utils.js";
 
 enum ManualLinkParsingState {
 	start, content, separation, link, title, end
@@ -95,12 +95,12 @@ export class P_Image extends P_Parser {
 		const imageDisplayPolicy = this.cursor.redditData.mediaDisplayPolicy ?? MediaDisplayPolicy.imageOrGif;
 		if (this.cursor.redditData.media_metadata && this.url in this.cursor.redditData.media_metadata) {
 			const media = this.cursor.redditData.media_metadata[this.url];
-			url = media.s.u ?? media.s.gif ?? "";
+			url = media?.s?.u ?? media?.s?.gif ?? "";
 			mediaID = this.url;
-			if (media.s.x && media.s.y) {
+			if (media?.s?.x && media?.s?.y) {
 				dimensions = {
-					width: media.s.x,
-					height: media.s.y,
+					width: media?.s?.x,
+					height: media?.s?.y,
 				};
 			}
 			if (imageDisplayPolicy === MediaDisplayPolicy.emoteOnly && !this.url.includes("emote|"))
@@ -126,7 +126,7 @@ export class P_Image extends P_Parser {
 		if (useLink) {
 			tag = "a";
 			useClosingTag = true;
-			attributes.push(["href", encodeURI(url)]);
+			attributes.push(["href", tryEncodeURI(url)]);
 			if (this.title)
 				attributes.push(["title", this.title]);
 			if (this.alt)
@@ -135,7 +135,7 @@ export class P_Image extends P_Parser {
 		else {
 			tag = "img";
 			useClosingTag = false;
-			attributes.push(["src", encodeURI(url)]);
+			attributes.push(["src", tryEncodeURI(url)]);
 			if (this.title)
 				attributes.push(["title", this.title]);
 			if (this.alt)

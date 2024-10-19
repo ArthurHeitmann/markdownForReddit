@@ -1,6 +1,6 @@
 import {AfterParseResult, P_Parser, ParserType} from "./P_Parser.js";
 import {P_BasicText} from "./P_BasicText.js";
-import {escapeHtml, escapeAttr} from "../utils.js";
+import {escapeHtml, escapeAttr, tryEncodeURI} from "../utils.js";
 
 enum LinkParsingState {
 	notStarted, reddit, schema, manual
@@ -10,7 +10,7 @@ enum ManualLinkParsingState {
 }
 const redditRegex = /^\/?(r|u|user)\/[^\/]+/;
 const schemaRegex = /^(http:\/\/|https:\/\/|ftp:\/\/|mailto:|git:\/\/|steam:\/\/|irc:\/\/|news:\/\/|mumble:\/\/|ssh:\/\/|ircs:\/\/|ts3server:\/\/).+/;
-const manualRegex = /^\[.+]\((http:\/\/|https:\/\/|ftp:\/\/|mailto:|git:\/\/|steam:\/\/|irc:\/\/|news:\/\/|mumble:\/\/|ssh:\/\/|ircs:\/\/|ts3server:\/\/|\/|#)([^)]|\\\)|\\\()+\)/s;
+const manualRegex = /^\[.+]\((http:\/\/|https:\/\/|ftp:\/\/|mailto:|git:\/\/|steam:\/\/|irc:\/\/|news:\/\/|mumble:\/\/|ssh:\/\/|ircs:\/\/|ts3server:\/\/|\/|#)([^)]|\\\)|\\\()+\)/;
 
 /** A link can be either reddit internal (r/all), or a URI text (https://reddit.com), or manually defined (displayed
  *  text + link + (optionally) title attribute) */
@@ -118,6 +118,6 @@ export class P_Link extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<a href="${escapeAttr(encodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
+		return `<a href="${escapeAttr(tryEncodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
 	}
 }

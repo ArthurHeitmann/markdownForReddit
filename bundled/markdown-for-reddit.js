@@ -141,6 +141,13 @@ function escapeAttr(string) {
 function escapeRegex(strToEscape) {
   return strToEscape.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
+function tryEncodeURI(uri) {
+  try {
+    return encodeURI(uri);
+  } catch (e) {
+    return uri;
+  }
+}
 var MediaDisplayPolicy;
 (function(MediaDisplayPolicy2) {
   MediaDisplayPolicy2[MediaDisplayPolicy2["link"] = 0] = "link";
@@ -438,7 +445,7 @@ var ManualLinkParsingState;
 })(ManualLinkParsingState || (ManualLinkParsingState = {}));
 var redditRegex = /^\/?(r|u|user)\/[^\/]+/;
 var schemaRegex = /^(http:\/\/|https:\/\/|ftp:\/\/|mailto:|git:\/\/|steam:\/\/|irc:\/\/|news:\/\/|mumble:\/\/|ssh:\/\/|ircs:\/\/|ts3server:\/\/).+/;
-var manualRegex = /^\[.+]\((http:\/\/|https:\/\/|ftp:\/\/|mailto:|git:\/\/|steam:\/\/|irc:\/\/|news:\/\/|mumble:\/\/|ssh:\/\/|ircs:\/\/|ts3server:\/\/|\/|#)([^)]|\\\)|\\\()+\)/s;
+var manualRegex = /^\[.+]\((http:\/\/|https:\/\/|ftp:\/\/|mailto:|git:\/\/|steam:\/\/|irc:\/\/|news:\/\/|mumble:\/\/|ssh:\/\/|ircs:\/\/|ts3server:\/\/|\/|#)([^)]|\\\)|\\\()+\)/;
 var P_Link = class extends P_Parser {
   id = "link";
   canChildrenRepeat = false;
@@ -517,7 +524,7 @@ var P_Link = class extends P_Parser {
     return AfterParseResult.consumed;
   }
   toHtmlString() {
-    return `<a href="${escapeAttr(encodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
+    return `<a href="${escapeAttr(tryEncodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
   }
 };
 
@@ -606,12 +613,12 @@ var P_Image = class extends P_Parser {
     const imageDisplayPolicy = this.cursor.redditData.mediaDisplayPolicy ?? MediaDisplayPolicy.imageOrGif;
     if (this.cursor.redditData.media_metadata && this.url in this.cursor.redditData.media_metadata) {
       const media = this.cursor.redditData.media_metadata[this.url];
-      url = media.s.u ?? media.s.gif ?? "";
+      url = media?.s?.u ?? media?.s?.gif ?? "";
       mediaID = this.url;
-      if (media.s.x && media.s.y) {
+      if (media?.s?.x && media?.s?.y) {
         dimensions = {
-          width: media.s.x,
-          height: media.s.y
+          width: media?.s?.x,
+          height: media?.s?.y
         };
       }
       if (imageDisplayPolicy === MediaDisplayPolicy.emoteOnly && !this.url.includes("emote|"))
@@ -635,7 +642,7 @@ var P_Image = class extends P_Parser {
     if (useLink) {
       tag = "a";
       useClosingTag = true;
-      attributes.push(["href", encodeURI(url)]);
+      attributes.push(["href", tryEncodeURI(url)]);
       if (this.title)
         attributes.push(["title", this.title]);
       if (this.alt)
@@ -643,7 +650,7 @@ var P_Image = class extends P_Parser {
     } else {
       tag = "img";
       useClosingTag = false;
-      attributes.push(["src", encodeURI(url)]);
+      attributes.push(["src", tryEncodeURI(url)]);
       if (this.title)
         attributes.push(["title", this.title]);
       if (this.alt)
@@ -757,7 +764,7 @@ var P_CodeMultilineFenced = class extends P_Parser {
   parsingState = ParsingState.start;
   parsedStartTicks = 0;
   canStart() {
-    return this.cursor.column === 0 && /^(`{3,})\n(.*\n)*\1($|\n)/.test(this.cursor.remainingText);
+    return this.cursor.column === 0 && /^(`{3,})\n[\s\S]*\n\1($|\n)/.test(this.cursor.remainingText);
   }
   canConsumeChar() {
     return true;
@@ -1463,7 +1470,7 @@ var ParsingCursor = class {
 
 // src/main.ts
 function parseMarkdown(markdown, additionalRedditData) {
-  markdown = markdown.replace(/\r/g, "").replace(/^(\s*\n)*|(\s*\n)*$/g, "").replace(/\n\s*$/g, "\n");
+  markdown = markdown.replace(/\r/g, "").replace(/^\s*\n|\s*$/g, "").replace(/\n\s*$/g, "\n");
   const cursor = new ParsingCursor(markdown, additionalRedditData);
   const rootParser = new P_Root(cursor);
   let parseResult;
