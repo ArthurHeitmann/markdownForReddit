@@ -521,27 +521,27 @@ describe("Markdown to HTML", () => {
 	describe("Links", () => {
 		describe("reddit internal links", () => {
 			it("subreddit", () => {
-				testMarkdown("r/all", `<p><a href="/r/all">r/all</a></p>`)
-				testMarkdown("/r/all", `<p><a href="/r/all">/r/all</a></p>`)
-				testMarkdown("r/reddit.com", `<p><a href="/r/reddit.com">r/reddit.com</a></p>`)
-				testMarkdown("/r/some_sub", `<p><a href="/r/some_sub">/r/some_sub</a></p>`)
+				testMarkdown("r/all", `<p><a href="/r/all" target="_blank">r/all</a></p>`)
+				testMarkdown("/r/all", `<p><a href="/r/all" target="_blank">/r/all</a></p>`)
+				testMarkdown("r/reddit.com", `<p><a href="/r/reddit.com" target="_blank">r/reddit.com</a></p>`)
+				testMarkdown("/r/some_sub", `<p><a href="/r/some_sub" target="_blank">/r/some_sub</a></p>`)
 			});
 
 			it("user", () => {
-				testMarkdown("u/all", `<p><a href="/u/all">u/all</a></p>`)
-				testMarkdown("/u/all", `<p><a href="/u/all">/u/all</a></p>`)
-				testMarkdown("user/all", `<p><a href="/user/all">user/all</a></p>`)
-				testMarkdown("/user/all", `<p><a href="/user/all">/user/all</a></p>`)
+				testMarkdown("u/all", `<p><a href="/u/all" target="_blank">u/all</a></p>`)
+				testMarkdown("/u/all", `<p><a href="/u/all" target="_blank">/u/all</a></p>`)
+				testMarkdown("user/all", `<p><a href="/user/all" target="_blank">user/all</a></p>`)
+				testMarkdown("/user/all", `<p><a href="/user/all" target="_blank">/user/all</a></p>`)
 			});
 
 			it("combinations", () => {
-				testMarkdown("r/pics+announcements+test+reddit.com", `<p><a href="/r/pics+announcements+test+reddit.com">r/pics+announcements+test+reddit.com</a></p>`)
-				testMarkdown("u/all/m/multi", `<p><a href="/u/all/m/multi">u/all/m/multi</a></p>`)
-				testMarkdown("(r/all)", `<p>(<a href="/r/all">r/all</a>)</p>`)
+				testMarkdown("r/pics+announcements+test+reddit.com", `<p><a href="/r/pics+announcements+test+reddit.com" target="_blank">r/pics+announcements+test+reddit.com</a></p>`)
+				testMarkdown("u/all/m/multi", `<p><a href="/u/all/m/multi" target="_blank">u/all/m/multi</a></p>`)
+				testMarkdown("(r/all)", `<p>(<a href="/r/all" target="_blank">r/all</a>)</p>`)
 			});
 
 			it("non links", () => {
-				testMarkdown("r/all.nope", `<p><a href="/r/all">r/all</a>.nope</p>`)
+				testMarkdown("r/all.nope", `<p><a href="/r/all" target="_blank">r/all</a>.nope</p>`)
 				testMarkdown("r/", `<p>r/</p>`)
 				testMarkdown("x/sub", `<p>x/sub</p>`)
 			});
@@ -549,13 +549,13 @@ describe("Markdown to HTML", () => {
 
 		describe("Schema Links", () => {
 			it("schemas", () => {
-				testMarkdown("https://reddit.com", `<p><a href="https://reddit.com">https://reddit.com</a></p>`)
-				testMarkdown("https://reddit.com/r/all/top?t=all&count=10", `<p><a href="https://reddit.com/r/all/top?t=all&count=10">https://reddit.com/r/all/top?t=all&amp;count=10</a></p>`)
+				testMarkdown("https://reddit.com", `<p><a href="https://reddit.com" target="_blank">https://reddit.com</a></p>`)
+				testMarkdown("https://reddit.com/r/all/top?t=all&count=10", `<p><a href="https://reddit.com/r/all/top?t=all&count=10" target="_blank">https://reddit.com/r/all/top?t=all&amp;count=10</a></p>`)
 			});
 
 			it("different environments", () => {
-				testMarkdown("text https://reddit.com text2", `<p>text <a href="https://reddit.com">https://reddit.com</a> text2</p>`)
-				testMarkdown("(https://reddit.com)", `<p>(<a href="https://reddit.com">https://reddit.com</a>)</p>`)
+				testMarkdown("text https://reddit.com text2", `<p>text <a href="https://reddit.com" target="_blank">https://reddit.com</a> text2</p>`)
+				testMarkdown("(https://reddit.com)", `<p>(<a href="https://reddit.com" target="_blank">https://reddit.com</a>)</p>`)
 			});
 
 			it("non links", () => {
@@ -566,8 +566,8 @@ describe("Markdown to HTML", () => {
 
 		describe("Manual Links", () => {
 			it("simple", () => {
-				testMarkdown("[text](/link)", `<p><a href="/link">text</a></p>`)
-				testMarkdown("[text](/link \"title\")", `<p><a href="/link" title="title">text</a></p>`)
+				testMarkdown("[text](/link)", `<p><a href="/link" target="_blank">text</a></p>`)
+				testMarkdown("[text](/link \"title\")", `<p><a href="/link" title="title" target="_blank">text</a></p>`)
 			});
 
 			it("Escaped", () => {
@@ -575,39 +575,39 @@ describe("Markdown to HTML", () => {
 			});
 
 			it("no xss", () => {
-				testMarkdown(`[text "><script></script><!--](/xss)`, `<p><a href="/xss">text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--</a></p>`)
+				testMarkdown(`[text "><script></script><!--](/xss)`, `<p><a href="/xss" target="_blank">text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--</a></p>`)
 			});
 		});
 
 		it("no xss", () => {
-			testMarkdown(`[text "><script></script><!--](/xss)`, `<p><a href="/xss">text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--</a></p>`)
+			testMarkdown(`[text "><script></script><!--](/xss)`, `<p><a href="/xss" target="_blank">text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--</a></p>`)
 		});
 	});
 
 	describe("Images", () => {
 		describe("URL", () => {
 			it("Simple", () => {
-				testMarkdown("![alt text](/path/to/img.jpg)", `<p><img src="/path/to/img.jpg" alt="alt text"></p>`)
+				testMarkdown("![alt text](/path/to/img.jpg)", `<p><img src="/path/to/img.jpg" alt="alt text" target="_blank"></p>`)
 			});
 	
 			it("Allowed domains", () => {
-				testMarkdown("![alt text](https://i.redd.it/path/to/img.jpg)", `<p><img src="https://i.redd.it/path/to/img.jpg" alt="alt text"></p>`)
-				testMarkdown("![alt text](https://preview.redd.it/path/to/img.jpg)", `<p><img src="https://preview.redd.it/path/to/img.jpg" alt="alt text"></p>`)
-				testMarkdown("![alt text](https://www.reddit.com/path/to/img.jpg)", `<p><img src="https://www.reddit.com/path/to/img.jpg" alt="alt text"></p>`)
+				testMarkdown("![alt text](https://i.redd.it/path/to/img.jpg)", `<p><img src="https://i.redd.it/path/to/img.jpg" alt="alt text" target="_blank"></p>`)
+				testMarkdown("![alt text](https://preview.redd.it/path/to/img.jpg)", `<p><img src="https://preview.redd.it/path/to/img.jpg" alt="alt text" target="_blank"></p>`)
+				testMarkdown("![alt text](https://www.reddit.com/path/to/img.jpg)", `<p><img src="https://www.reddit.com/path/to/img.jpg" alt="alt text" target="_blank"></p>`)
 			});
 	
 			it("Disallowed domains", () => {
-				testMarkdown("![alt text](https://www.google.com/path/to/img.jpg)", `<p><a href="https://www.google.com/path/to/img.jpg">alt text</a></p>`)
-				testMarkdown("![alt text](https://i.redd.it.youtube.com/path/to/img.jpg)", `<p><a href="https://i.redd.it.youtube.com/path/to/img.jpg">alt text</a></p>`)
+				testMarkdown("![alt text](https://www.google.com/path/to/img.jpg)", `<p><a href="https://www.google.com/path/to/img.jpg" target="_blank">alt text</a></p>`)
+				testMarkdown("![alt text](https://i.redd.it.youtube.com/path/to/img.jpg)", `<p><a href="https://i.redd.it.youtube.com/path/to/img.jpg" target="_blank">alt text</a></p>`)
 			});
 	
 			it("Escaped", () => {
-				testMarkdown("\\![alt text](/path/to/img.jpg)", `<p>\\!<a href="/path/to/img.jpg">alt text</a></p>`)
+				testMarkdown("\\![alt text](/path/to/img.jpg)", `<p>\\!<a href="/path/to/img.jpg" target="_blank">alt text</a></p>`)
 				testMarkdown("\\!\\[alt text](/path/to/img.jpg)", `<p>\\![alt text](/path/to/img.jpg)</p>`)
 			});
 	
 			it("No alt", () => {
-				testMarkdown("![](/path/to/img.jpg)", `<p><img src="/path/to/img.jpg"></p>`)
+				testMarkdown("![](/path/to/img.jpg)", `<p><img src="/path/to/img.jpg" target="_blank"></p>`)
 			});
 	
 			it("No src", () => {
@@ -615,8 +615,8 @@ describe("Markdown to HTML", () => {
 			});
 	
 			it("No xss", () => {
-				testMarkdown(`![text "><script></script><!--](/xss)`, `<p><img src="/xss" alt="text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--"></p>`)
-				testMarkdown(`![text](/xss '"><script></script><!--')`, `<p><img src="/xss" title="&quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--" alt="text"></p>`)
+				testMarkdown(`![text "><script></script><!--](/xss)`, `<p><img src="/xss" alt="text &quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--" target="_blank"></p>`)
+				testMarkdown(`![text](/xss '"><script></script><!--')`, `<p><img src="/xss" title="&quot;&gt;&lt;script&gt;&lt;/script&gt;&lt;!--" alt="text" target="_blank"></p>`)
 			});
 		});
 		
@@ -629,7 +629,7 @@ describe("Markdown to HTML", () => {
 			it("With additional media metadata", () => {
 				testMarkdown(
 					"![img](emote|t5_2th52|27189)",
-					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44" data-media-id="emote|t5_2th52|27189"></p>`,
+					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44" data-media-id="emote|t5_2th52|27189" target="_blank"></p>`,
 					{
 						media_metadata: {
 							"emote|t5_2th52|27189": {
@@ -649,7 +649,7 @@ describe("Markdown to HTML", () => {
 				)
 				testMarkdown(
 					"![img](emote|t5_2th52|27189)",
-					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44" data-media-id="emote|t5_2th52|27189"></p>`,
+					`<p><img src="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" alt="img" width="60" height="44" data-media-id="emote|t5_2th52|27189" target="_blank"></p>`,
 					{
 						media_metadata: {
 							"emote|t5_2th52|27189": {
@@ -670,7 +670,7 @@ describe("Markdown to HTML", () => {
 				)
 				testMarkdown(
 					"![img](emote|t5_2th52|27189)",
-					`<p><a href="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png">img</a></p>`,
+					`<p><a href="https://reddit-econ-prod-assets-permanent.s3.amazonaws.com/asset-manager/t5_2th52/i3WYd8wEH8.png" target="_blank">img</a></p>`,
 					{
 						media_metadata: {
 							"emote|t5_2th52|27189": {
@@ -691,7 +691,7 @@ describe("Markdown to HTML", () => {
 				)
 				testMarkdown(
 					"![img](eobz0qkh7x4c1 \"Image caption: tap the community topic and ranking to explore similar communities.\")",
-					`<p><img src="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities." alt="img" width="1740" height="1704" data-media-id="eobz0qkh7x4c1"></p>`,
+					`<p><img src="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities." alt="img" width="1740" height="1704" data-media-id="eobz0qkh7x4c1" target="_blank"></p>`,
 					{
 						media_metadata: {
 							"eobz0qkh7x4c1": {
@@ -711,7 +711,7 @@ describe("Markdown to HTML", () => {
 				)
 				testMarkdown(
 					"![img](eobz0qkh7x4c1 \"Image caption: tap the community topic and ranking to explore similar communities.\")",
-					`<p><a href="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities.">img</a></p>`,
+					`<p><a href="https://preview.redd.it/eobz0qkh7x4c1.png?width=1740&format=png&auto=webp&s=1ab1e3999283b86ad5435bea9580d0628c46ceb3" title="Image caption: tap the community topic and ranking to explore similar communities." target="_blank">img</a></p>`,
 					{
 						media_metadata: {
 							"eobz0qkh7x4c1": {
@@ -749,7 +749,7 @@ describe("Markdown to HTML", () => {
 					"|----------|----------|----------|\n" +
 					"| row1 \\| | r/all    | *2*      |\n" +
 					"| - row 2  | `val 2`  | ^3 \\|   |",
-					`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row1 |</td>\n<td><a href="/r/all">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup> |</td>\n</tr>\n</tbody></table>`)
+					`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row1 |</td>\n<td><a href="/r/all" target="_blank">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup> |</td>\n</tr>\n</tbody></table>`)
 			});
 
 			it("Aligned table", () => {
@@ -758,7 +758,7 @@ describe("Markdown to HTML", () => {
 					"|:---------|---------:|:--------:|\n" +
 					"| row 1    | r/all    | *2*      |\n" +
 					"| - row 2  | `val 2`  | ^3       |",
-					`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
+					`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all" target="_blank">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 				
 			});
 			it("Simple Table (minimal)", () => {
@@ -767,7 +767,7 @@ describe("Markdown to HTML", () => {
 					"|-|-|-|\n" +
 					"|row 1|r/all|*2*|\n" +
 					"|- row 2|`val 2`|^3|",
-					`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup></td>\n</tr>\n</tbody></table>`)
+					`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all" target="_blank">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 			});
 
 			it("Aligned Table (minimal)", () => {
@@ -776,7 +776,7 @@ describe("Markdown to HTML", () => {
 					"|:-|-:|:-:|\n" +
 					"|row 1|r/all |*2*|\n" +
 					"|- row 2|`val 2`|^3|",
-					`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
+					`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all" target="_blank">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 			});
 
 			it("1 Column Table (minimal)", () => {
@@ -794,7 +794,7 @@ describe("Markdown to HTML", () => {
 					"|row 1|r/all |*2*|\n" +
 					"|- row 2|`val 2`|^3|\n" +
 					"|  | ||",
-					`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n<tr>\n<td align="left"></td>\n<td align="right"></td>\n<td align="center"></td>\n</tr>\n</tbody></table>`)
+					`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all" target="_blank">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n<tr>\n<td align="left"></td>\n<td align="right"></td>\n<td align="center"></td>\n</tr>\n</tbody></table>`)
 			});
 
 			it("Simple Table with column span", () => {
@@ -822,7 +822,7 @@ describe("Markdown to HTML", () => {
 					"---------|----------|----------\n" +
 					"row 1    | r/all    | *2*\n" +
 					"- row 2  | `val 2`  | ^3 \\|\n",
-					`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup> |</td>\n</tr>\n</tbody></table>`)
+					`<table><thead>\n<tr>\n<th>Header 1</th>\n<th>Header 2</th>\n<th>Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td>row 1</td>\n<td><a href="/r/all" target="_blank">r/all</a></td>\n<td><em>2</em></td>\n</tr>\n<tr>\n<td>- row 2</td>\n<td><code>val 2</code></td>\n<td><sup>3</sup> |</td>\n</tr>\n</tbody></table>`)
 			});
 
 			it("Aligned Table", () => {
@@ -831,7 +831,7 @@ describe("Markdown to HTML", () => {
 					":--------|---------:|:--------:\n" +
 					"row 1    | r/all    | *2*\n" +
 					"- row 2  | `val 2`  | ^3\n",
-					`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
+					`<table><thead>\n<tr>\n<th align="left">Header 1</th>\n<th align="right">Header 2</th>\n<th align="center">Header 3</th>\n</tr>\n</thead><tbody>\n<tr>\n<td align="left">row 1</td>\n<td align="right"><a href="/r/all" target="_blank">r/all</a></td>\n<td align="center"><em>2</em></td>\n</tr>\n<tr>\n<td align="left">- row 2</td>\n<td align="right"><code>val 2</code></td>\n<td align="center"><sup>3</sup></td>\n</tr>\n</tbody></table>`)
 			});
 
 			it("2 Column Table (minimal)", () => {

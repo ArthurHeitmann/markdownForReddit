@@ -118,6 +118,6 @@ export class P_Link extends P_Parser {
 	}
 
 	toHtmlString(): string {
-		return `<a href="${escapeAttr(tryEncodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
+		return `<a href="${escapeAttr(tryEncodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""} target="_blank">${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
 	}
 }

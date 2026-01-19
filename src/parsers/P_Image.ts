@@ -147,6 +147,7 @@ export class P_Image extends P_Parser {
 			if (mediaID)
 				attributes.push(["data-media-id", mediaID]);
 		}
+		attributes.push(["target", "_blank"]);
 		let html = `<${tag}`;
 		for (const [key, value] of attributes) {
 			html += ` ${key}="${escapeAttr(value)}"`;

@@ -524,7 +524,7 @@ var P_Link = class extends P_Parser {
     return AfterParseResult.consumed;
   }
   toHtmlString() {
-    return `<a href="${escapeAttr(tryEncodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""}>${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
+    return `<a href="${escapeAttr(tryEncodeURI(this.url))}"${this.title ? ` title="${escapeAttr(this.title)}"` : ""} target="_blank">${super.toHtmlString() || escapeHtml(this.altLinkText)}</a>`;
   }
 };
 
@@ -662,6 +662,7 @@ var P_Image = class extends P_Parser {
       if (mediaID)
         attributes.push(["data-media-id", mediaID]);
     }
+    attributes.push(["target", "_blank"]);
     let html = `<${tag}`;
     for (const [key, value] of attributes) {
       html += ` ${key}="${escapeAttr(value)}"`;
